@@ -10,7 +10,7 @@ import {
 import { GraphData } from '../interfaces/interfaces'
 
 const X_AXIS_TITLE = 'Volume (mL)'
-const Y_AXIS_TITLE = 'Time (s)'    
+const Y_AXIS_TITLE = 'Time (s)'
 const TIME_CONSTANT = 1000000000000 * 1.7
 
 export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: number) => {
@@ -31,31 +31,37 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
         .setTickStrategy(AxisTickStrategies.Numeric)
         .setTitle(Y_AXIS_TITLE)
 
-
     const heatmap = chart.addHeatmapGridSeries({
         columns: columns,
         rows: rows,
-        start: { x: 1000, y: minValue }, 
-        step: { x: 1000 / columns, y: (maxValue - minValue) / rows }, 
+        start: { x: 1000, y: minValue },
+        step: { x: 1000 / columns, y: (maxValue - minValue) / rows },
         dataOrder: 'rows',
         heatmapDataType: 'intensity',
     })
 
-
-    heatmap.setWireframeStyle(emptyLine)
+        .setWireframeStyle(emptyLine)
         .setFillStyle(new PalettedFill({
             lookUpProperty: 'value',
             lut: new LUT({
                 interpolate: true,
                 steps: regularColorSteps(
                     -200,
-                    -250, 
+                    -250,
                     chart.getTheme().examples?.spectrogramColorPalette ?? [],
                 ),
 
             }),
         }))
-    heatmap.invalidateIntensityValues(graphData[param_id].data)
+        .invalidateIntensityValues(graphData[param_id].data)
+        .setName('show graph')
+
+        .onMouseDoubleClick(() => {
+            chart.getDefaultAxisX()
+                .setInterval({ start: startVolume, end: endVolume })
+            chart.getDefaultAxisY()
+                .setInterval({ start: minValue, end: maxValue })
+        })
 
     chart
         .addLegendBox(LegendBoxBuilders.VerticalLegendBox)
@@ -63,9 +69,8 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
             type: 'max-width',
             maxWidth: 0.8,
         })
-        .add(chart) 
+        .add(chart)
 
-    heatmap.setName('show graph')
 
     return heatmap
 }
