@@ -4,20 +4,30 @@ from fastapi.responses import JSONResponse
 from random import randint
 from datetime import datetime, timedelta
 import numpy as np
+from starlette.middleware.cors import CORSMiddleware
 
 from config import HOST, PORT
+from param_validation import RequestParams
 
 app = FastAPI()
 
-@app.get("/mock-data")
-def get_mock_data():
-    random_id = randint(1, 100)
-    data = np.random.randint(200, 251, size=(34, 400)).tolist()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # באפשרותך לשים ["http://localhost:3000"] כדי להגביל
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/get_data")
+def get_mock_data(request: RequestParams):
+    id = request.id
+    data = np.random.randint(-250, -199, size=(34, 400)).tolist()
     base_time = datetime.utcnow()
     capture_times = [(base_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(34)]
 
     response = {
-        random_id: {
+        id: {
             "data": data,
             "captureTimes": capture_times
         }
