@@ -1,9 +1,7 @@
 // App.tsx
 import React, { useState } from 'react'
-import { generateSnapshotData } from './Components/mockData'
-import { InteractiveRectangleChart } from './Components/heatmapRectangle'
-import { StaticHeatmap } from './Components/heatmapAnomalies'
 import NoamGraph from './Components/Noam/noamGraph'
+import { generateSnapshotData } from './Components/utils/mockData'
 
  const App = () => {
   const [data, setData] = useState<number[][]>([])
