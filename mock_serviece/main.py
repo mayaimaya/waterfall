@@ -1,7 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from random import randint
 from datetime import datetime, timedelta
 import numpy as np
 from starlette.middleware.cors import CORSMiddleware
