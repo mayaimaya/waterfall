@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/get_data")
+@app.post("/get_data")
 def get_mock_data(request: RequestParams):
     id = request.id
     data = np.random.randint(-250, -199, size=(34, 400)).tolist()
