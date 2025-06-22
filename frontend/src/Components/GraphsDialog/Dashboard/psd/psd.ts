@@ -56,14 +56,12 @@ export const createPsd = (
         .setTitle(Y_AXIS_TITLE)
         .setTickStrategy(AxisTickStrategies.Numeric);
 
-    // Add line series for PSD
     const psdSeries = chart.addLineSeries()
         .setName(LEGENDS_TEXT)
         .setStrokeStyle((stroke) => stroke.setThickness(2));
 
     psdSeries.add(averagedPsd);
 
-    // Add legend
     chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
         .add(psdSeries);
 

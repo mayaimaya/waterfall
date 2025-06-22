@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
     Box,
-    Typography,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
     Dialog,
     DialogContent,
-    IconButton,
+
 } from '@mui/material';
 import { SweepData } from '../interfaces/interfaces';
 import OptionsMenu from './OptionsMenu/OptionsMenu';
