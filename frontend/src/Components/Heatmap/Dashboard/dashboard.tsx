@@ -4,15 +4,20 @@ import {
     Themes,
 } from '@arction/lcjs'
 import { createHeatmap } from '../Heatmap'
-import { GraphData } from '../../interfaces/interfaces'
+import { GraphConfig, GraphData } from '../../interfaces/interfaces'
 import AxiosService from '../API/backend'
 
 
 const HeatmapDashboard = () => {
     const [graphData, setGraphData] = useState<GraphData | undefined>(undefined)
-    const param_id = 5
+
+    const graphConfig: GraphConfig = {
+        startVolume: 1000,
+        endVolume: 2000,
+        paramId: 5
+    }
     useEffect(() => {
-        new AxiosService().getData(param_id)
+        new AxiosService().getData(graphConfig.paramId)
             .then((response: GraphData) => {
                 console.log(response)
                 setGraphData(response)
@@ -40,8 +45,8 @@ const HeatmapDashboard = () => {
         const chart1 = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
         const chart2 = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
 
-        const heatmap1 = createHeatmap(chart1, graphData, param_id)
-        const heatmap2 = createHeatmap(chart2, graphData, param_id)
+        createHeatmap(chart1, graphData, graphConfig)
+        createHeatmap(chart2, graphData, graphConfig)
 
         return () => {
             dashboard.dispose()

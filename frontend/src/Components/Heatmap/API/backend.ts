@@ -1,19 +1,18 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import axios, { AxiosResponse, type AxiosInstance } from 'axios'
 import type { GraphData } from '../../interfaces/interfaces'
+import { VITE_BACKEND_URL } from '../../../config'
 
 class AxiosService {
   private instance: AxiosInstance
 
   constructor() {
-    this.instance = axios.create({ baseURL: 'http://127.0.0.1:5000/' })
+    this.instance = axios.create({ baseURL: VITE_BACKEND_URL })
   }
 
 
   public getData = async (id: number): Promise<GraphData> => {
         try {
-        const response = await this.instance.post<GraphData>('get_data', {
-            id: id
-        })
+        const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id})
         return response.data
         } catch (error) {
         console.error('Error fetching data:', error)
