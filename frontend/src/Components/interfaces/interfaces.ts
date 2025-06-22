@@ -4,3 +4,10 @@ export interface GraphData {
         captureTimes: string[]
 }
 }
+
+export interface SelectionArea  {
+  startTime: number
+  endTime: number
+  minVolume: number
+  maxVolume: number
+}

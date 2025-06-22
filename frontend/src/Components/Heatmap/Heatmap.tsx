@@ -25,6 +25,7 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
         .setInterval({ start: startVolume, end: endVolume })
         .setTickStrategy(AxisTickStrategies.Numeric)
         .setTitle(X_AXIS_TITLE)
+        
 
     chart.getDefaultAxisY()
         .setInterval({ start: minValue, end: maxValue })
@@ -57,11 +58,10 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
         .setName('show graph')
 
         .onMouseDoubleClick(() => {
-            chart.getDefaultAxisX()
-                .setInterval({ start: startVolume, end: endVolume })
-            chart.getDefaultAxisY()
-                .setInterval({ start: minValue, end: maxValue })
-        })
+            chart.getDefaultAxisX().setInterval({ start: startVolume, end: endVolume })
+            chart.getDefaultAxisY().setInterval({ start: minValue, end: maxValue })
+        }) 
+    
 
     chart
         .addLegendBox(LegendBoxBuilders.VerticalLegendBox)
