@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, type AxiosInstance } from 'axios'
-import type { GraphData } from '../interfaces/interfaces'
+import type { SweepData } from '../interfaces/interfaces'
 import { BackendUrl } from '../../config'
 
 class SweepsClient {
@@ -10,9 +10,9 @@ class SweepsClient {
   }
 
 
-  public getSweepData = async (id: number): Promise<GraphData> => {
+  public getSweepData = async (id: number): Promise<SweepData> => {
         try {
-        const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id})
+        const response: AxiosResponse = await this.instance.post<SweepData>('get_data', {id})
         return response.data
         } catch (error) {
         console.error('Error fetching data:', error)

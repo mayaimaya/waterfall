@@ -1,14 +1,14 @@
 import { ThemeProvider } from '@mui/styles'
-import Dashboard from './Components/Heatmap/Dashboard/dashboard'
 import theme from './style/theme'
 import { CssBaseline } from '@mui/material'
+import MainPage from './Components/mainPage/mainPage'
 
 function App() {
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Dashboard />
+      <MainPage />
     </ThemeProvider>
   )
 }

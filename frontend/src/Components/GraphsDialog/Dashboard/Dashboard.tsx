@@ -1,33 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef} from 'react'
 import {
     lightningChart,
     Themes,
 } from '@arction/lcjs'
-import { createHeatmap } from '../Heatmap'
-import { GraphData } from '../../interfaces/interfaces'
-import לsweepsClient from '../../API/backend'
+import { createHeatmap } from './Heatmap/Heatmap'
+import { SweepData } from '../../interfaces/interfaces'
 import useStyles from './dashboardStyles'
+import { createPsd } from './psd/psd'
 
-
-const Dashboard = () => {
-    const [sweepData, setSweepData] = useState<GraphData | undefined>(undefined)
+interface Props {
+    sweepData: SweepData | undefined
+}
+const Dashboard: React.FC<Props> = ({ sweepData }) => {
 
     const classes = useStyles()
 
     const startVolume = 1000
     const endVolume = 2000
     const locationId = 5
-
-    useEffect(() => {
-        new לsweepsClient().getSweepData(locationId)
-            .then((response: GraphData) => {
-                setSweepData(response)
-            })
-            .catch((error: any) => {
-                console.error('Error fetching data:', error)
-                setSweepData(undefined)
-            })
-    }, [])
 
 
 
@@ -47,7 +37,7 @@ const Dashboard = () => {
         const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
 
         createHeatmap(heatmapGraph, sweepData, locationId, startVolume, endVolume)
-        createHeatmap(psdGraph, sweepData, locationId, startVolume, endVolume)
+        createPsd(psdGraph, sweepData, locationId, startVolume, endVolume)
 
         return () => {
             dashboard.dispose()
