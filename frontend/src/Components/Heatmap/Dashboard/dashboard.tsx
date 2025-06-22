@@ -1,21 +1,38 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import {
-  lightningChart,
-  Themes,
+    lightningChart,
+    Themes,
 } from '@arction/lcjs'
 import { createHeatmap } from '../Heatmap'
-import { GraphData, SelectionArea } from '../../interfaces/interfaces'
+import { GraphConfig, GraphData, SelectionArea } from '../../interfaces/interfaces'
 import AxiosService from '../API/backend'
+import useStyles from './dashboardStyles'
 import { DrawingContext } from '../../../context/drawingContext'
 import { enableRectangleInteraction } from '../rectangleInteraction'
+
 
 const HeatmapDashboard = () => {
   const [graphData, setGraphData] = useState<GraphData | undefined>(undefined)
   const [selectedArea, setSelectedArea] = useState<SelectionArea | null>(null)
-  // const [showResolutionModal, setShowResolutionModal] = useState(false)
-
   const { enableDraw, setEnableDraw } = useContext(DrawingContext)
-  const param_id = 5
+  
+  const classes = useStyles()
+  const graphConfig: GraphConfig = {
+      startVolume: 1000,
+      endVolume: 2000,
+      paramId: 5
+  }
+  useEffect(() => {
+    new AxiosService().getData(graphConfig.paramId)
+        .then((response: GraphData) => {
+            setGraphData(response)
+        })
+        .catch((error: any) => {
+            console.error('Error fetching data:', error)
+            setGraphData(undefined)
+        })
+  }, [])
+
 
 
   const chartRef = useRef<any>(null)
@@ -26,43 +43,29 @@ const HeatmapDashboard = () => {
 
   const cleanupRef = useRef<(() => void) | null>(null)
 
-  // ✅ שלב 1 – מביאים את הנתונים פעם אחת
+  // building the graph every time the data changes
   useEffect(() => {
-    new AxiosService().getData(param_id)
-      .then((response: GraphData) => {
-        setGraphData(response)
+      if (!containerRef.current || !graphData) return
+
+      const dashboard = lightningChart().Dashboard({
+          container: containerRef.current,
+          numberOfColumns: 1,
+          numberOfRows: 1,
+          theme: Themes.darkGold,
       })
-      .catch((error: any) => {
-        console.error('Error fetching data:', error)
-        setGraphData(undefined)
-      })
-  }, [])
 
-  // ✅ שלב 2 – בונים את הגרף רק כשהגיעו נתונים
-  useEffect(() => {
-    if (!containerRef.current || !graphData) return
+      const chart = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
+      chartRef.current = chart
+      createHeatmap(chart, graphData, graphConfig)
 
-    const dashboard = lightningChart().Dashboard({
-      container: containerRef.current,
-      numberOfColumns: 1,
-      numberOfRows: 1,
-      theme: Themes.darkGold,
-    })
-
-    const chart = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap')
-    chartRef.current = chart
-
-    createHeatmap(chart, graphData, param_id)
-
-    return () => {
-      dashboard.dispose()
-    }
+      return () => {
+          dashboard.dispose()
+      }
   }, [graphData])
 
   useEffect(() => { console.log('Selected area:', selectedArea) }, [selectedArea])
 
-
-  // ✅ שלב 3 – מפעילים / מבטלים את מצב הציור מבלי להרוס את הגרף
+  // Enable rectangle interaction when enableDraw is true
   useEffect(() => {
     const chart = chartRef.current
     if (!chart) return
@@ -79,22 +82,21 @@ const HeatmapDashboard = () => {
         rectDimensions,
         onSelectionComplete: (selection) => {
           setSelectedArea(selection)
-          // setShowResolutionModal(true)
-    },
+        },
       })
     }
-
-
     return () => {
       if (cleanupRef.current) {
         cleanupRef.current()
         cleanupRef.current = null
       }
     }
-  }, [enableDraw]) // ✅ שינוי רק במצב הציור – בלי להרוס את הגרף
+  }, [enableDraw]) 
+
+
 
   return (
-    <div ref={containerRef} style={{ width: '1000px', height: '600px' }} />
+    <div ref={containerRef} className={classes.dashboard} />
   )
 }
 

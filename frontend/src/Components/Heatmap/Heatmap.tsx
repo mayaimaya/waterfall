@@ -7,19 +7,21 @@ import {
     regularColorSteps,
     AxisTickStrategies,
 } from '@arction/lcjs'
-import { GraphData } from '../interfaces/interfaces'
+import { GraphConfig, GraphData } from '../interfaces/interfaces'
+import { TIME_CONSTANT } from '../constants'
 
 const X_AXIS_TITLE = 'Volume (mL)'
 const Y_AXIS_TITLE = 'Time (s)'
-const TIME_CONSTANT = 1000000000000 * 1.7
+const LUT_MIN_VALUE = -200
+const LUT_MAX_VALUE = -250
 
-export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: number) => {
-    const startVolume = 1000
-    const endVolume = 2000
-    const rows = graphData[param_id].captureTimes.length
-    const columns = graphData[param_id].data[0].length
-    const maxValue = Math.max(...graphData[param_id].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
-    const minValue = Math.min(...graphData[param_id].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
+export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig: GraphConfig) => {
+    const { paramId, startVolume, endVolume } = graphConfig
+    const rows = graphData[paramId].captureTimes.length
+    const columns = graphData[paramId].data[0].length
+
+    const maxValue = Math.max(...graphData[paramId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
+    const minValue = Math.min(...graphData[paramId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
 
     chart.getDefaultAxisX()
         .setInterval({ start: startVolume, end: endVolume })
@@ -32,11 +34,11 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
         .setTickStrategy(AxisTickStrategies.Numeric)
         .setTitle(Y_AXIS_TITLE)
 
-    const heatmap = chart.addHeatmapGridSeries({
+    chart.addHeatmapGridSeries({
         columns: columns,
         rows: rows,
-        start: { x: 1000, y: minValue },
-        step: { x: 1000 / columns, y: (maxValue - minValue) / rows },
+        start: { x: startVolume, y: minValue },
+        step: { x: (endVolume - startVolume) / columns, y: (maxValue - minValue) / rows },
         dataOrder: 'rows',
         heatmapDataType: 'intensity',
     })
@@ -47,14 +49,14 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
             lut: new LUT({
                 interpolate: true,
                 steps: regularColorSteps(
-                    -200,
-                    -250,
+                    LUT_MIN_VALUE,
+                    LUT_MAX_VALUE,
                     chart.getTheme().examples?.spectrogramColorPalette ?? [],
                 ),
 
             }),
         }))
-        .invalidateIntensityValues(graphData[param_id].data)
+        .invalidateIntensityValues(graphData[paramId].data)
         .setName('show graph')
 
         .onMouseDoubleClick(() => {
@@ -72,5 +74,5 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, param_id: nu
         .add(chart)
 
 
-    return heatmap
+    return chart
 }
