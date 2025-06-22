@@ -3,7 +3,7 @@ import {
   ColorRGBA,
   SolidLine,
 } from "@arction/lcjs"
-import { EnableRectangleInteraction } from "../../interfaces/interfaces"
+import { EnableRectangleInteraction } from "../../../interfaces/interfaces"
 
 
 /**

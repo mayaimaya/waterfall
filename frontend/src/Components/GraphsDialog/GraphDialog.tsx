@@ -1,8 +1,6 @@
 import React from 'react';
 import {
     Box,
-   
-    
     Dialog,
     DialogContent,
 } from '@mui/material';
@@ -21,9 +19,8 @@ interface Props {
     setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>; // Adjust type as
 }
 const GraphsDialog: React.FC<Props> = (props:Props) => {
-    const { open, setOpen, sweepData, setSweepData, graphConfig, setGraphConfig } = props;
+    const { setOpen, sweepData, setSweepData, graphConfig, setGraphConfig } = props;
     const [enableDraw, setEnableDraw] = React.useState<boolean>(false);
-
 
     return (
         <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}> 
