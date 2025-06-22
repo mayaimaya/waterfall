@@ -1,11 +1,12 @@
 import { ChartXY, PointMarker, UIBackground } from "@arction/lcjs"
 import { RefObject } from "react"
 
-export interface GraphData {
-  [id: number] : {
-    data: number[][]
-    captureTimes: string[]
-  }
+
+export interface SweepData {
+    [id: number] : {
+        data: number[][]
+        captureTimes: string[]
+}
 }
 
 export interface Position {

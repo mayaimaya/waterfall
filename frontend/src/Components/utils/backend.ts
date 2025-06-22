@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, type AxiosInstance } from 'axios'
-import type { GraphData } from '../interfaces/interfaces'
+import type { SweepData } from '../interfaces/interfaces'
 import { BackendUrl } from '../../config'
 
 class SweepsClient {
@@ -10,9 +10,9 @@ class SweepsClient {
   }
 
 
-  public getSweepData = async (id: number, startDate : string, endDate : string): Promise<GraphData> => {
+  public getSweepData = async (id: number, startDate : string, endDate : string): Promise<SweepData> => {
     try {
-      const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id, startDate, endDate})
+      const response: AxiosResponse = await this.instance.post<SweepData>('get_data', {id, startDate, endDate})
       return response.data
     } 
     catch (error) {

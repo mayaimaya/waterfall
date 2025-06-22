@@ -3,28 +3,31 @@ import {
   lightningChart,
   Themes,
 } from '@arction/lcjs'
-import { GraphConfig, GraphData, SelectionArea } from '../interfaces/interfaces'
-import useStyles from './dashboardStyles'
-import { DrawingContext } from '../../context/drawingContext'
-import { enableRectangleInteraction } from './Heatmap/rectangleInteraction'
-import ResolutionPopupMenu from './Heatmap/DrawResolution/resolutionPopupMenu'
-import SweepsClient from '../utils/backend'
-import { createHeatmap } from './Heatmap/Heatmap'
+
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import UndoIcon from '@mui/icons-material/Undo'
+import { createPsd } from './psd/createPsd'
+import { DrawingContext } from '../../../context/drawingContext'
+import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
+import { GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
+import SweepsClient from '../../utils/backend'
+import useStyles from './DashboardStyles'
+import { createHeatmap } from './Heatmap/createHeatmap'
+import { enableRectangleInteraction } from './DrawResolution/rectangleInteraction'
 
-interface HeatmapDashboardProps {
-  graphConfig: GraphConfig
-  setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
+interface DashboardProps {
+    sweepData?: SweepData
+    graphConfig: GraphConfig
+    setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
+    setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
 }
 
-const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboardProps) => {
-  const { graphConfig, setGraphConfig } = props
+const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
+  const { graphConfig, setGraphConfig, sweepData , setSweepData} = props
 
   const sweepsClient = new SweepsClient()
-  const [sweepData, setSweepData] = useState<GraphData | undefined>(undefined)
-  const [previousData, setPreviousData] = useState<GraphData | null>(null)
+  const [previousData, setPreviousData] = useState<SweepData | null>(null)
 
   const [selectedArea, setSelectedArea] = useState<SelectionArea | null>(null)
   const [resolutionPopupPos, setResolutionPopupPos] = useState<{ left: number; top: number } | null>(null)
@@ -34,18 +37,8 @@ const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboar
   const classes = useStyles()
 
 
-  useEffect(() => {
-    sweepsClient.getSweepData(graphConfig.locationId, graphConfig.startDate, graphConfig.endDate)
-      .then((response: GraphData) => {
-          setSweepData(response)
-      })
-      .catch((error: any) => {
-          console.error('Error fetching data:', error)
-          setSweepData(undefined)
-      })
-  }, [])
 
-  const chartRef = useRef<any>(null)
+  const waterfallChartRef = useRef<any>(null)
   const rectRef = useRef<any>(null)
   const rectDimensions = useRef<any>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
@@ -59,14 +52,18 @@ const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboar
     const dashboard = lightningChart().Dashboard({
       container: containerRef.current,
       numberOfColumns: 1,
-      numberOfRows: 1,
+      numberOfRows: 2,
       theme: Themes.darkGold,
     })
 
-    const chart = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap')
-    chartRef.current = chart
+    const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
+    const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
 
-    sweepData && createHeatmap(chart, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+    createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+    createPsd(psdGraph, sweepData,graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+
+    waterfallChartRef.current = heatmapGraph
+
 
     return () => {
       dashboard.dispose()
@@ -74,7 +71,7 @@ const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboar
   }, [sweepData])
 
   useEffect(() => {
-    const chart = chartRef.current
+    const chart = waterfallChartRef.current
     if (!chart) return
 
     chart.setMouseInteractionRectangleZoom(!enableDraw)
@@ -87,7 +84,7 @@ const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboar
         startPoint,
         rectRef,
         rectDimensions,
-        onSelectionComplete: (selection) => {
+        onSelectionComplete: (selection : SelectionArea) => {
           setSelectedArea(selection)
           setResolutionPopupPos(selection.screenPosition)
         },
@@ -173,4 +170,6 @@ const HeatmapDashboard :React.FC<HeatmapDashboardProps> = (props:HeatmapDashboar
   )
 }
 
-export default HeatmapDashboard
+export default Dashboard
+
+

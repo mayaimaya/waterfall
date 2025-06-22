@@ -7,10 +7,8 @@ import {
     regularColorSteps,
     AxisTickStrategies,
 } from '@arction/lcjs'
-import { TIME_CONSTANT } from '../../constants'
-import { GraphData } from '../../interfaces/interfaces'
-
-
+import { SweepData } from '../../../interfaces/interfaces'
+import { TIME_CONSTANT } from '../../../constants'
 
 const X_AXIS_TITLE = 'Volume (mL)'
 const Y_AXIS_TITLE = 'Time (s)'
@@ -18,7 +16,7 @@ const LUT_MIN_VALUE = -200
 const LUT_MAX_VALUE = -250
 const LEGENDS_TEXT = ''
 
-export const createHeatmap = (chart: ChartXY, sweepData: GraphData, locationId: number, startVolume: number, endVolume: number) : ChartXY => {
+export const createHeatmap = (chart: ChartXY, sweepData: SweepData, locationId: number, startVolume: number, endVolume: number) : ChartXY => {
     const rows = sweepData[locationId].captureTimes.length
     const columns = sweepData[locationId].data[0].length
 
