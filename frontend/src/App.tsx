@@ -1,9 +1,15 @@
-import HeatmapDashboard from './Components/Heatmap/Dashboard/dashboard'
+import { ThemeProvider } from '@mui/styles'
+import Dashboard from './Components/Heatmap/Dashboard/dashboard'
+import theme from './style/theme'
+import { CssBaseline } from '@mui/material'
 
 function App() {
 
   return (
-    <div><HeatmapDashboard /></div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Dashboard />
+    </ThemeProvider>
   )
 }
 

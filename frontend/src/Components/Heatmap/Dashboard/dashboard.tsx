@@ -4,27 +4,28 @@ import {
     Themes,
 } from '@arction/lcjs'
 import { createHeatmap } from '../Heatmap'
-import { GraphConfig, GraphData } from '../../interfaces/interfaces'
-import AxiosService from '../API/backend'
+import { GraphData } from '../../interfaces/interfaces'
+import לsweepsClient from '../../API/backend'
 import useStyles from './dashboardStyles'
 
 
-const HeatmapDashboard = () => {
-    const [graphData, setGraphData] = useState<GraphData | undefined>(undefined)
+const Dashboard = () => {
+    const [sweepData, setSweepData] = useState<GraphData | undefined>(undefined)
+
     const classes = useStyles()
-    const graphConfig: GraphConfig = {
-        startVolume: 1000,
-        endVolume: 2000,
-        paramId: 5
-    }
+
+    const startVolume = 1000
+    const endVolume = 2000
+    const locationId = 5
+
     useEffect(() => {
-        new AxiosService().getData(graphConfig.paramId)
+        new לsweepsClient().getSweepData(locationId)
             .then((response: GraphData) => {
-                setGraphData(response)
+                setSweepData(response)
             })
             .catch((error: any) => {
                 console.error('Error fetching data:', error)
-                setGraphData(undefined)
+                setSweepData(undefined)
             })
     }, [])
 
@@ -33,7 +34,7 @@ const HeatmapDashboard = () => {
     const containerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (!containerRef.current || !graphData) return
+        if (!containerRef.current || !sweepData) return
 
         const dashboard = lightningChart().Dashboard({
             container: containerRef.current,
@@ -42,20 +43,20 @@ const HeatmapDashboard = () => {
             theme: Themes.darkGold,
         })
 
-        const chart1 = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
-        const chart2 = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
+        const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
+        const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
 
-        createHeatmap(chart1, graphData, graphConfig)
-        createHeatmap(chart2, graphData, graphConfig)
+        createHeatmap(heatmapGraph, sweepData, locationId, startVolume, endVolume)
+        createHeatmap(psdGraph, sweepData, locationId, startVolume, endVolume)
 
         return () => {
             dashboard.dispose()
         }
-    }, [graphData])
+    }, [sweepData])
 
     return (
         <div ref={containerRef} className={classes.dashboard} />
     )
 }
 
-export default HeatmapDashboard
+export default Dashboard

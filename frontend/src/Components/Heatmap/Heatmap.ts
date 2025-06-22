@@ -7,21 +7,21 @@ import {
     regularColorSteps,
     AxisTickStrategies,
 } from '@arction/lcjs'
-import { GraphConfig, GraphData } from '../interfaces/interfaces'
+import { GraphData } from '../interfaces/interfaces'
 import { TIME_CONSTANT } from '../constants'
 
 const X_AXIS_TITLE = 'Volume (mL)'
 const Y_AXIS_TITLE = 'Time (s)'
 const LUT_MIN_VALUE = -200
 const LUT_MAX_VALUE = -250
+const LEGENDS_TEXT = ''
 
-export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig: GraphConfig) => {
-    const { paramId, startVolume, endVolume } = graphConfig
-    const rows = graphData[paramId].captureTimes.length
-    const columns = graphData[paramId].data[0].length
+export const createHeatmap = (chart: ChartXY, sweepData: GraphData, locationId: number, startVolume: number, endVolume: number) : ChartXY => {
+    const rows = sweepData[locationId].captureTimes.length
+    const columns = sweepData[locationId].data[0].length
 
-    const maxValue = Math.max(...graphData[paramId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
-    const minValue = Math.min(...graphData[paramId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
+    const maxValue = Math.max(...sweepData[locationId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
+    const minValue = Math.min(...sweepData[locationId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
 
     chart.getDefaultAxisX()
         .setInterval({ start: startVolume, end: endVolume })
@@ -55,8 +55,8 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig:
 
             }),
         }))
-        .invalidateIntensityValues(graphData[paramId].data)
-        .setName('show graph')
+        .invalidateIntensityValues(sweepData[locationId].data)
+        .setName(LEGENDS_TEXT)
 
         .onMouseDoubleClick(() => {
             chart.getDefaultAxisX()
@@ -72,7 +72,6 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig:
             maxWidth: 0.8,
         })
         .add(chart)
-
 
     return chart
 }

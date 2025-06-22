@@ -4,9 +4,3 @@ export interface GraphData {
         captureTimes: string[]
 }
 }
-
-export interface GraphConfig {
-        startVolume: number
-        endVolume: number
-        paramId: number
-    }

@@ -2,7 +2,7 @@ import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles({
   dashboard: {
-    width: '1000px', 
+    width: '900px', 
     height: '600px'
   },
 })

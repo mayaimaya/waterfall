@@ -1,16 +1,16 @@
 import axios, { AxiosResponse, type AxiosInstance } from 'axios'
-import type { GraphData } from '../../interfaces/interfaces'
-import { VITE_BACKEND_URL } from '../../../config'
+import type { GraphData } from '../interfaces/interfaces'
+import { BackendUrl } from '../../config'
 
-class AxiosService {
+class SweepsClient {
   private instance: AxiosInstance
 
   constructor() {
-    this.instance = axios.create({ baseURL: VITE_BACKEND_URL })
+    this.instance = axios.create({ baseURL: BackendUrl })
   }
 
 
-  public getData = async (id: number): Promise<GraphData> => {
+  public getSweepData = async (id: number): Promise<GraphData> => {
         try {
         const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id})
         return response.data
@@ -19,4 +19,4 @@ class AxiosService {
         throw error
         }
     }}
-    export default AxiosService
+    export default SweepsClient
