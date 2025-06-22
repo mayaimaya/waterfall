@@ -2,9 +2,9 @@ import {
     ChartXY,
     AxisTickStrategies,
     LegendBoxBuilders,
-    emptyLine
 } from '@arction/lcjs';
 import { SweepData } from '../../../interfaces/interfaces';
+import { computeChunkAveragedPSD } from '../../../../assets/utiles/utiles';
 
 const X_AXIS_TITLE = 'Frequency (Hz)';
 const Y_AXIS_TITLE = 'Power (dB)';
@@ -24,7 +24,7 @@ export const createPsd = (
     const VolumeStep = (endFrequency - startFrequency) / columns;
 
     // We'll average the power across all sweeps (rows) per frequency point (column)
-    const averagedPsd: { x: number, y: number }[] = []
+    const averagedPsd: { x: number, y: number }[] = computeChunkAveragedPSD(sweepData[locationId].data, startFrequency, endFrequency);
 
     // sweepData[locationId].data.forEach((packet: number[], packetNum: number) => {
     //     let sum = 0
@@ -35,17 +35,17 @@ export const createPsd = (
     //         y: avgPower
     //     });
     // })
-    for (let col = 0; col < columns; col++) {
-        let sum = 0;
-        for (let row = 0; row < rows; row++) {
-            sum += sweepData[locationId].data[row][col];
-        }
-        const avgPower = sum / rows;
-        averagedPsd.push({
-            x: startFrequency + col * VolumeStep,
-            y: avgPower
-        });
-    }
+    // for (let col = 0; col < columns; col++) {
+    //     let sum = 0;
+    //     for (let row = 0; row < rows; row++) {
+    //         sum += sweepData[locationId].data[row][col];
+    //     }
+    //     const avgPower = sum / rows;
+    //     averagedPsd.push({
+    //         x: startFrequency + col * VolumeStep,
+    //         y: avgPower
+    //     });
+    // }
     // Configure axes
     chart.getDefaultAxisX()
         .setInterval({ start: startFrequency, end: endFrequency })

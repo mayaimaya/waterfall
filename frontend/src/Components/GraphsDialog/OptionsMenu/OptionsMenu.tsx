@@ -60,14 +60,14 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
             >
                 <FormControlLabel
                     value="PSD הצג"
-                    control={<Radio size="small" />}
+                    control={<Radio />}
                     label="PSD הצג"
                     className={classes.radioItem}
                 />
                 <FormControlLabel
-                    value="גן PSD"
-                    control={<Radio size="small" />}
-                    label="גן PSD"
+                    value="PSD נגן"
+                    control={<Radio />}
+                    label="PSD נגן"
                     className={classes.radioItem}
                 />
             </RadioGroup>

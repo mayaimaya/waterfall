@@ -7,7 +7,7 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import UndoIcon from '@mui/icons-material/Undo'
-import { createPsd } from './psd/createPsd'
+import { createPsd } from './psd/Psd'
 import { DrawingContext } from '../../../context/drawingContext'
 import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
 import { GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
