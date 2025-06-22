@@ -1,0 +1,129 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [ "react",
+    "react-hooks",
+    "@typescript-eslint",
+    "jsx-a11y",
+    "prettier",
+    "prefer-arrow",
+    "import"  // add import plugin here
+  ],
+  "extends": [
+    "plugin:prettier/recommended",
+    "eslint:recommended",               // ESLint's core recommended rules.
+    "plugin:react/recommended",         // React specific linting rules.
+    "plugin:react-hooks/recommended",   // Rules for React Hooks.
+    "plugin:@typescript-eslint/eslint-recommended", // Disables ESLint rules that are handled by TypeScript.
+    "plugin:@typescript-eslint/recommended",      // TypeScript specific recommended rules.
+    "plugin:jsx-a11y/recommended",      // Accessibility rules for JSX.
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "JSXAttribute[name.name='style']",
+        "message": "Avoid using inline style prop"
+      },
+      {
+        "selector": "JSXAttribute[name.name='sx']",
+        "message": "Avoid using sx prop; prefer classes or styled components."
+      },
+      {
+        "selector": "JSXOpeningElement[name.type='JSXIdentifier'][name.name=/^(?!div$|img$)[a-z0-9]+$/]",
+        "message": "Using native HTML tags other than <div> and <img> is not allowed."
+      }
+    ],
+    "prefer-arrow/prefer-arrow-functions": [
+      "error",
+      {
+        "disallowPrototype": true,
+        "singleReturnOnly": false,
+        "classPropertiesAllowed": false
+      }
+    ], 
+    "prettier/prettier": ["warn", { "endOfLine": "auto" }],
+    "react/jsx-tag-spacing": [
+      "error",
+      {
+        "beforeSelfClosing": "always",
+        "closingSlash": "never",
+        "afterOpening": "never",
+        "beforeClosing": "never"
+      }
+    ],
+    "react/jsx-closing-bracket-location": ["error", "tag-aligned"],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    // 1. Enforce single quotes for JavaScript/TypeScript strings
+    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+    // 2. Enforce single quotes for JSX attributes
+    "jsx-quotes": ["error", "prefer-single"],
+    "linebreak-style": ["off"],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",     // Node built-in modules (fs, path)
+          "external",    // Packages from node_modules
+          "internal",    // Internal modules (your aliases, if configured)
+          "parent",      // Parent folders
+          "sibling",     // Sibling files
+          "index"        // Index files
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "builtin",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react"],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ],
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "React",
+        "property": "useState",
+        "message": "Import useState directly instead of using React.useState"
+      },
+      {
+        "object": "React",
+        "property": "useEffect",
+        "message": "Import useEffect directly instead of using React.useEffect"
+      },
+      {
+        "object": "React",
+        "property": "useContext",
+        "message": "Import useContext directly instead of using React.useContext"
+      },
+      {
+        "object": "React",
+        "property": "useRef",
+        "message": "Import useRef directly instead of using React.useRef"
+      },
+      {
+        "object": "React",
+        "property": "useMemo",
+        "message": "Import useMemo directly instead of using React.useMemo"
+      },
+      {
+        "object": "React",
+        "property": "useCallback",
+        "message": "Import useCallback directly instead of using React.useCallback"
+      }
+    ]
+
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
