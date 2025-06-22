@@ -12,7 +12,8 @@ import { TIME_CONSTANT } from '../constants'
 
 const X_AXIS_TITLE = 'Volume (mL)'
 const Y_AXIS_TITLE = 'Time (s)'
-
+const LUT_MIN_VALUE = -200
+const LUT_MAX_VALUE = -250
 
 export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig: GraphConfig) => {
     const { paramId, startVolume, endVolume } = graphConfig
@@ -32,7 +33,7 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig:
         .setTickStrategy(AxisTickStrategies.Numeric)
         .setTitle(Y_AXIS_TITLE)
 
-    const heatmap = chart.addHeatmapGridSeries({
+    chart.addHeatmapGridSeries({
         columns: columns,
         rows: rows,
         start: { x: startVolume, y: minValue },
@@ -47,8 +48,8 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig:
             lut: new LUT({
                 interpolate: true,
                 steps: regularColorSteps(
-                    -200,
-                    -250,
+                    LUT_MIN_VALUE,
+                    LUT_MAX_VALUE,
                     chart.getTheme().examples?.spectrogramColorPalette ?? [],
                 ),
 
@@ -73,5 +74,5 @@ export const createHeatmap = (chart: ChartXY, graphData: GraphData, graphConfig:
         .add(chart)
 
 
-    return heatmap
+    return chart
 }

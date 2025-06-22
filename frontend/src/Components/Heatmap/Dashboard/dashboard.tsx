@@ -6,11 +6,12 @@ import {
 import { createHeatmap } from '../Heatmap'
 import { GraphConfig, GraphData } from '../../interfaces/interfaces'
 import AxiosService from '../API/backend'
+import useStyles from './dashboardStyles'
 
 
 const HeatmapDashboard = () => {
     const [graphData, setGraphData] = useState<GraphData | undefined>(undefined)
-
+    const classes = useStyles()
     const graphConfig: GraphConfig = {
         startVolume: 1000,
         endVolume: 2000,
@@ -54,7 +55,7 @@ const HeatmapDashboard = () => {
     }, [graphData])
 
     return (
-        <div ref={containerRef} style={{ width: '1000px', height: '600px' }} />
+        <div ref={containerRef} className={classes.dashboard} />
     )
 }
 
