@@ -1,22 +1,10 @@
 import {
-  ChartXY,
-  PointMarker,
-  UIBackground,
   SolidFill,
   ColorRGBA,
   SolidLine,
 } from "@arction/lcjs"
-import { RefObject } from "react"
-import { SelectionArea } from "../interfaces/interfaces";
+import { EnableRectangleInteraction } from "../../interfaces/interfaces"
 
-export interface EnableRectangleInteraction {
-  chart: ChartXY<PointMarker, UIBackground>
-  startPoint: RefObject<{ x: number; y: number } | null>
-  rectRef: RefObject<any>
-  rectDimensions: RefObject<any>
-  setEnableDraw: (value: boolean) => void
-  onSelectionComplete?: (selection: SelectionArea) => void
-}
 
 /**
  * Enables interactive rectangle selection on a chart component.
@@ -140,11 +128,19 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
       endTime: y + height,
       minVolume: x,
       maxVolume: x + width,
+      
     }
+    const bounds = chart.engine.container.getBoundingClientRect()
+    const centerY = y + height / 2
+    const rightX = x + width
+
+    const left = (((rightX - axisX.getInterval().start) / (axisX.getInterval().end - axisX.getInterval().start)) * bounds.width) + 20
+    const top = bounds.height - ((centerY - axisY.getInterval().start) / (axisY.getInterval().end - axisY.getInterval().start)) * bounds.height
+
 
     // 🔔 שולח את המידע החוצה
     if (onSelectionComplete) {
-      onSelectionComplete(selection)
+      onSelectionComplete({... selection, screenPosition: { left, top }})
     }
 
     // איפוס

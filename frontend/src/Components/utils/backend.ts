@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, type AxiosInstance } from 'axios'
-import type { GraphData } from '../../interfaces/interfaces'
-import { VITE_BACKEND_URL } from '../../../config'
+import { VITE_BACKEND_URL } from '../../config'
+import { GraphData } from '../interfaces/interfaces'
+
 
 class AxiosService {
   private instance: AxiosInstance

@@ -7,8 +7,8 @@ import {
     regularColorSteps,
     AxisTickStrategies,
 } from '@arction/lcjs'
-import { GraphConfig, GraphData } from '../interfaces/interfaces'
-import { TIME_CONSTANT } from '../constants'
+import { GraphConfig, GraphData } from '../../interfaces/interfaces'
+import { TIME_CONSTANT } from '../../constants'
 
 const X_AXIS_TITLE = 'Volume (mL)'
 const Y_AXIS_TITLE = 'Time (s)'

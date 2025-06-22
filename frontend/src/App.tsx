@@ -1,6 +1,6 @@
 // App.tsx
 import React, { useRef, useState } from 'react'
-import HeatmapDashboard from './Components/Heatmap/Dashboard/dashboard'
+import HeatmapDashboard from './Components/Dashboard/dashboard'
 import { DrawingProvider } from './context/drawingContext'
 
 function App() {
