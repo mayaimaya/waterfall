@@ -7,7 +7,7 @@ const useStyles = makeStyles({
     height: '600px',
   },
   dashboard: {
-    width: '1000px', 
+    width: '900px', 
     height: '600px'
   },
 })

@@ -1,18 +1,21 @@
-// App.tsx
-import React, { useRef, useState } from 'react'
+import { useState } from 'react'
 import HeatmapDashboard from './Components/Dashboard/dashboard'
 import { DrawingProvider } from './context/drawingContext'
+import { ThemeProvider } from '@mui/styles'
+import theme from './style/theme'
+import { CssBaseline } from '@mui/material'
 
-function App() {
+const App = () => {
   const [enableDraw, setEnableDraw] = useState<boolean>(false)
-
 
   const clickDraw = () => {
     setEnableDraw(true) 
   }
 
   return (
-    <div>
+
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <DrawingProvider enableDraw={enableDraw} setEnableDraw ={setEnableDraw}>
           <button
             style={{width:'100px', height:'100px', backgroundColor:'green'}} 
@@ -22,8 +25,7 @@ function App() {
         </button>
         <HeatmapDashboard/>
       </DrawingProvider>
-     
-    </div>
+    </ThemeProvider>
   )
 }
 
