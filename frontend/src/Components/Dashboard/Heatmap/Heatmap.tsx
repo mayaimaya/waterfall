@@ -8,7 +8,7 @@ import {
     AxisTickStrategies,
 } from '@arction/lcjs'
 import { TIME_CONSTANT } from '../../constants'
-import { GraphConfig, GraphData } from '../../interfaces/interfaces'
+import { GraphData } from '../../interfaces/interfaces'
 
 
 
@@ -18,8 +18,7 @@ const LUT_MIN_VALUE = -200
 const LUT_MAX_VALUE = -250
 const LEGENDS_TEXT = ''
 
-export const createHeatmap = (chart: ChartXY, sweepData: GraphData,graphConfig: GraphConfig) : ChartXY => {
-    const { startVolume, endVolume, locationId } = graphConfig
+export const createHeatmap = (chart: ChartXY, sweepData: GraphData, locationId: number, startVolume: number, endVolume: number) : ChartXY => {
     const rows = sweepData[locationId].captureTimes.length
     const columns = sweepData[locationId].data[0].length
 

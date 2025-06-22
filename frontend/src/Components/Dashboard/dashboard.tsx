@@ -3,38 +3,38 @@ import {
   lightningChart,
   Themes,
 } from '@arction/lcjs'
-import { createHeatmap } from './Heatmap/Heatmap'
 import { GraphConfig, GraphData, SelectionArea } from '../interfaces/interfaces'
 import useStyles from './dashboardStyles'
 import { DrawingContext } from '../../context/drawingContext'
 import { enableRectangleInteraction } from './Heatmap/rectangleInteraction'
 import ResolutionPopupMenu from './Heatmap/DrawResolution/resolutionPopupMenu'
-import AxiosService from '../utils/backend'
+import SweepsClient from '../utils/backend'
+import { createHeatmap } from './Heatmap/Heatmap'
+
 
 const HeatmapDashboard = () => {
-  const [graphData, setGraphData] = useState<GraphData | undefined>(undefined)
+  const sweepsClient = new SweepsClient()
+  const [sweepData, setSweepData] = useState<GraphData | undefined>(undefined)
   const [selectedArea, setSelectedArea] = useState<SelectionArea | null>(null)
   const [resolutionPopupPos, setResolutionPopupPos] = useState<{ left: number; top: number } | null>(null)
 
   const { enableDraw, setEnableDraw } = useContext(DrawingContext)
   const classes = useStyles()
 
-  const graphConfig: GraphConfig = {
-    startVolume: 1000,
-    endVolume: 2000,
-    paramId: 5,
-  }
+  const startVolume = 1000
+    const endVolume = 2000
+    const locationId = 5
 
   useEffect(() => {
-    new AxiosService().getData(graphConfig.paramId)
-      .then((response: GraphData) => {
-        setGraphData(response)
-      })
-      .catch((error: any) => {
-        console.error('Error fetching data:', error)
-        setGraphData(undefined)
-      })
-  }, [])
+        sweepsClient.getSweepData(locationId)
+            .then((response: GraphData) => {
+                setSweepData(response)
+            })
+            .catch((error: any) => {
+                console.error('Error fetching data:', error)
+                setSweepData(undefined)
+            })
+    }, [])
 
   const chartRef = useRef<any>(null)
   const rectRef = useRef<any>(null)
@@ -45,7 +45,7 @@ const HeatmapDashboard = () => {
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    if (!containerRef.current || !graphData) return
+    if (!containerRef.current || !sweepData) return
 
     const dashboard = lightningChart().Dashboard({
       container: containerRef.current,
@@ -57,12 +57,12 @@ const HeatmapDashboard = () => {
     const chart = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap')
     chartRef.current = chart
 
-    createHeatmap(chart, graphData, graphConfig)
+    sweepData && createHeatmap(chart, sweepData, locationId, startVolume, endVolume)
 
     return () => {
       dashboard.dispose()
     }
-  }, [graphData])
+  }, [sweepData])
 
   useEffect(() => {
     const chart = chartRef.current

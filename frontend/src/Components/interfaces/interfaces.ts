@@ -24,7 +24,7 @@ export interface SelectionArea  {
 export interface GraphConfig {
   startVolume: number
   endVolume: number
-  paramId: number
+  locationId: number
 }
 
 export interface EnableRectangleInteraction {
