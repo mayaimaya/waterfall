@@ -1,5 +1,5 @@
 // OptionsMenu.tsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     Box,
     Typography,
@@ -14,6 +14,7 @@ import {
 import RoomIcon from "@mui/icons-material/Room";
 import useStyles from "./OptionsMenuStyles";
 import CloseIcon from '@mui/icons-material/Close';
+import { DrawingContext } from "../../../context/drawingContext";
 
 interface Props {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,6 +22,14 @@ interface Props {
 const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
     const [selectedPSD, setSelectedPSD] = useState("PSD הצג");
     const classes = useStyles();
+
+    const { enableDraw, setEnableDraw } = useContext(DrawingContext);
+
+    const handleDraw = () => {
+        setEnableDraw(!enableDraw);
+    }
+
+
 
     return (
         <Box className={classes.container}>
@@ -52,14 +61,14 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
             >
                 <FormControlLabel
                     value="PSD הצג"
-                    control={<Radio size="small" />}
+                    control={<Radio />}
                     label="PSD הצג"
                     className={classes.radioItem}
                 />
                 <FormControlLabel
-                    value="גן PSD"
-                    control={<Radio size="small" />}
-                    label="גן PSD"
+                    value="PSD נגן"
+                    control={<Radio />}
+                    label="PSD נגן"
                     className={classes.radioItem}
                 />
             </RadioGroup>
@@ -68,7 +77,8 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
             {/* Buttons */}
             <Box className={classes.buttonGroup}>
                 <Button>מצב תצוגה</Button>
-                <Button>שנה תצוגה</Button>
+
+                <Button onClick={handleDraw}>שנה תצוגה</Button>
             </Box>
         </Box>
     );

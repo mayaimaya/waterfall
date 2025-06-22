@@ -4,8 +4,8 @@ import {
 } from '@mui/material';
 import GraphsDialog from '../GraphsDialog/GraphDialog';
 import useStyles from './mainPageStyles';
-import { SweepData } from '../interfaces/interfaces';
-import SweepsClient from '../API/backend';
+import { GraphConfig, SweepData } from '../interfaces/interfaces';
+import SweepsClient from '../utils/backend';
 
 interface MainPageProps {
     setMode: React.Dispatch<React.SetStateAction<"light" | "dark">>}
@@ -14,13 +14,21 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
     const { setMode } = props
 
     const [sweepData, setSweepData] = useState<SweepData | undefined>(undefined)
-    const locationId = 5
+    const end = new Date();
+    const start = new Date(end.getTime() - 60 * 60 * 1000);
+    const [graphConfig, setGraphConfig] = useState<GraphConfig>({
+        locationId: 5,
+        startVolume: 2000,
+        endVolume: 3000,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+    })
 
     const [open, setOpen] = useState(false);
     const classes = useStyles()
 
     useEffect(() => {
-        new SweepsClient().getSweepData(locationId)
+        new SweepsClient().getSweepData(graphConfig.locationId, graphConfig.startDate, graphConfig.endDate)
             .then((response: SweepData) => {
                 setSweepData(response)
             })
@@ -39,7 +47,14 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
             <Button variant="outlined" onClick={() => setOpen(true)}>
                 Open Graphs Dialog
             </Button>
-            <GraphsDialog open={open} setOpen={setOpen} sweepData={sweepData} />
+            <GraphsDialog 
+                open={open}
+                setOpen={setOpen}
+                sweepData={sweepData}
+                setSweepData={setSweepData}
+                graphConfig={graphConfig}
+                setGraphConfig={setGraphConfig}
+            />
         </div>
     );
 }
