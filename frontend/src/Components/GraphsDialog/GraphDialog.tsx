@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { SweepData } from '../interfaces/interfaces';
 import OptionsMenu from './OptionsMenu/OptionsMenu';
-import Dashboard from './Dashboard/dashboard';
+import Dashboard from './Dashboard/Dashboard';
 
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 }
 const GraphsDialog: React.FC<Props> = ({ open, setOpen, sweepData }) => {
     return (
-        <Dialog open={true} fullWidth maxWidth="md">
+        <Dialog onClose={() => setOpen(false)} open={open} fullWidth maxWidth="xl">
             <DialogContent sx={{ p: 0, height: '80vh' }}>
                 <Box display="flex" height="100%">
                     <Dashboard sweepData={sweepData} />

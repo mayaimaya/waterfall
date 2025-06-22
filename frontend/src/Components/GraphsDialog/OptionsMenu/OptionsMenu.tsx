@@ -10,6 +10,7 @@ import {
     Button,
     IconButton,
 } from "@mui/material";
+
 import RoomIcon from "@mui/icons-material/Room";
 import useStyles from "./OptionsMenuStyles";
 import CloseIcon from '@mui/icons-material/Close';
@@ -67,7 +68,6 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
             {/* Buttons */}
             <Box className={classes.buttonGroup}>
                 <Button>מצב תצוגה</Button>
-
                 <Button>שנה תצוגה</Button>
             </Box>
         </Box>

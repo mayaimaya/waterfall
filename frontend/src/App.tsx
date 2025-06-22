@@ -1,15 +1,18 @@
-import { ThemeProvider } from '@mui/styles'
-import theme from './style/theme'
-import { CssBaseline } from '@mui/material'
+import { useState } from 'react'
+import { CssBaseline, useColorScheme } from '@mui/material'
 import MainPage from './Components/mainPage/mainPage'
+import { ThemeProvider } from '@mui/material'
+import { darkTheme, lightTheme } from './style/theme.ts'
 
-function App() {
-
+const App = () => {
+  const [mode, setMode] = useState<'light' | 'dark'>('dark');
   return (
-    <ThemeProvider theme={theme}>
+    <>
+    <ThemeProvider theme={mode === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
-      <MainPage />
+      <MainPage setMode={setMode}/>
     </ThemeProvider>
+    </>
   )
 }
 

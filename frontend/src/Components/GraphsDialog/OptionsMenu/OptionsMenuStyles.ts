@@ -3,7 +3,6 @@ import { makeStyles } from '@mui/styles';
 const useStyles = makeStyles(() => ({
   container: {
     width: '25%',
-    backgroundColor: 'white',
     padding: '10px',
     display: 'flex',
     flexDirection: 'column',

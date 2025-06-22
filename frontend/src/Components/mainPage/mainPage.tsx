@@ -7,7 +7,12 @@ import useStyles from './mainPageStyles';
 import { SweepData } from '../interfaces/interfaces';
 import SweepsClient from '../API/backend';
 
-const MainPage: React.FC = () => {
+interface MainPageProps {
+    setMode: React.Dispatch<React.SetStateAction<"light" | "dark">>}
+
+const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
+    const { setMode } = props
+
     const [sweepData, setSweepData] = useState<SweepData | undefined>(undefined)
     const locationId = 5
 
@@ -28,6 +33,9 @@ const MainPage: React.FC = () => {
 
     return (
         <div className={classes.mainContainer}>
+                  <Button onClick={() => setMode(prev => prev === 'light' ? 'dark' : 'light')}>
+                  Toggle  mode
+                </Button>
             <Button variant="outlined" onClick={() => setOpen(true)}>
                 Open Graphs Dialog
             </Button>
