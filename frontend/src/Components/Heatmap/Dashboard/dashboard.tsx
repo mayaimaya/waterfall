@@ -20,7 +20,6 @@ const HeatmapDashboard = () => {
     useEffect(() => {
         new AxiosService().getData(graphConfig.paramId)
             .then((response: GraphData) => {
-                console.log(response)
                 setGraphData(response)
             })
             .catch((error: any) => {
