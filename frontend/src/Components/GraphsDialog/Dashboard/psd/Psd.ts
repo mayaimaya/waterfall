@@ -4,7 +4,7 @@ import {
     LegendBoxBuilders,
 } from '@arction/lcjs';
 import { SweepData } from '../../../interfaces/interfaces';
-import { computeChunkAveragedPSD } from '../../../../utiles/utiles';
+import { computeChunkAveragedPSD } from '../../../utils/utiles';
 
 const X_AXIS_TITLE = 'Frequency (Hz)';
 const Y_AXIS_TITLE = 'Power (dB)';
