@@ -7,7 +7,12 @@ import useStyles from './mainPageStyles';
 import { GraphConfig, SweepData } from '../interfaces/interfaces';
 import SweepsClient from '../utils/backend';
 
-const MainPage: React.FC = () => {
+interface MainPageProps {
+    setMode: React.Dispatch<React.SetStateAction<"light" | "dark">>}
+
+const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
+    const { setMode } = props
+
     const [sweepData, setSweepData] = useState<SweepData | undefined>(undefined)
     const end = new Date();
     const start = new Date(end.getTime() - 60 * 60 * 1000);
@@ -36,6 +41,9 @@ const MainPage: React.FC = () => {
 
     return (
         <div className={classes.mainContainer}>
+                  <Button onClick={() => setMode(prev => prev === 'light' ? 'dark' : 'light')}>
+                  Toggle  mode
+                </Button>
             <Button variant="outlined" onClick={() => setOpen(true)}>
                 Open Graphs Dialog
             </Button>
