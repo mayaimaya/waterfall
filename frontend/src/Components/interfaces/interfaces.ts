@@ -25,6 +25,8 @@ export interface GraphConfig {
   startVolume: number
   endVolume: number
   locationId: number
+  startDate: string
+  endDate: string
 }
 
 export interface EnableRectangleInteraction {

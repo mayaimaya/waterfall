@@ -10,13 +10,16 @@ class SweepsClient {
   }
 
 
-  public getSweepData = async (id: number): Promise<GraphData> => {
-        try {
-        const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id})
-        return response.data
-        } catch (error) {
-        console.error('Error fetching data:', error)
-        throw error
-        }
-    }}
-    export default SweepsClient
+  public getSweepData = async (id: number, startDate : string, endDate : string): Promise<GraphData> => {
+    try {
+      const response: AxiosResponse = await this.instance.post<GraphData>('get_data', {id, startDate, endDate})
+      return response.data
+    } 
+    catch (error) {
+      console.error('Error fetching data:', error)
+      throw error
+    }
+  }}
+
+
+  export default SweepsClient
