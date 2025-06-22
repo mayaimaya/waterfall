@@ -13,7 +13,6 @@ import UndoIcon from '@mui/icons-material/Undo'
 import { fetchHeatmapData } from '../hooks/useHeatmapDataNoam'
 import { createLutPalette } from '../utils/paletteNoam'
 import { ResolutionSelector } from './resolutionSelectorNoam'
-import { ZoomedHeatmap } from './zoomesHeatmaoNoam'
 
 interface Props {
   data: number[][]
@@ -22,6 +21,7 @@ interface Props {
 const NoamGraph: React.FC<Props> = ({ data }) => {
   const chartDiv = useRef<HTMLDivElement>(null)
   const chartRef = useRef<any>(null)
+  const heatmapRef = useRef<any>(null)
   const rectRef = useRef<any>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
   const rectDimensions = useRef<{ x: number; y: number; width: number; height: number } | null>(null)
@@ -33,15 +33,16 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
     yMax: number
   }>(null)
 
-  const [zoomData, setZoomData] = useState<number[][] | null>(null)
   const [loading, setLoading] = useState(false)
   const [showResolutionSelector, setShowResolutionSelector] = useState(false)
   const [historyStack, setHistoryStack] = useState<
-    { zoomData: number[][] | null; selectedArea: typeof selectedArea }[]
+    { data: number[][]; selectedArea: typeof selectedArea }[]
   >([])
 
+  const [currentData, setCurrentData] = useState<number[][]>(data)
+
   useEffect(() => {
-    if (!chartDiv.current || data.length === 0) return
+    if (!chartDiv.current || currentData.length === 0) return
 
     chartRef.current?.dispose()
 
@@ -57,8 +58,8 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
     const axisX = chart.getDefaultAxisX()
     const axisY = chart.getDefaultAxisY()
 
-    const rows = data.length
-    const cols = data[0].length
+    const rows = currentData.length
+    const cols = currentData[0].length
 
     axisX.setTitle('Volume (dBm)').setInterval({ start: 0, end: cols })
     axisY.setTitle('Time').setInterval({ start: 0, end: rows })
@@ -68,8 +69,9 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
       rows,
       columns: cols,
     })
+    heatmapRef.current = heatmap
 
-    const reversed = [...data].reverse()
+    const reversed = [...currentData].reverse()
     heatmap.invalidateIntensityValues(reversed)
     heatmap.setWireframeStyle(emptyLine)
     heatmap.setFillStyle(new PalettedFill({ lut: createLutPalette() }))
@@ -156,12 +158,12 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
       container.removeEventListener('pointerup', onPointerUp)
       chart.dispose()
     }
-  }, [data])
+  }, [currentData])
 
   const onResolutionSelect = async (resolution: number) => {
     if (!selectedArea) return
     setLoading(true)
-    setHistoryStack((prev) => [...prev, { zoomData, selectedArea }])
+    setHistoryStack((prev) => [...prev, { data: currentData, selectedArea }])
 
     const fetchedData = await fetchHeatmapData(
       selectedArea.xMin,
@@ -172,7 +174,7 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
       resolution,
     )
 
-    setZoomData(fetchedData)
+    setCurrentData(fetchedData)
     setShowResolutionSelector(false)
     setLoading(false)
   }
@@ -180,7 +182,7 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
   const onUndo = () => {
     if (historyStack.length === 0) return
     const last = historyStack[historyStack.length - 1]
-    setZoomData(last.zoomData)
+    setCurrentData(last.data)
     setSelectedArea(last.selectedArea)
     setHistoryStack((prev) => prev.slice(0, -1))
   }
@@ -188,14 +190,26 @@ const NoamGraph: React.FC<Props> = ({ data }) => {
   return (
     <>
       <div ref={chartDiv} style={{ width: '1000px', height: '600px', position: 'relative' }} />
-      {loading && <div className="loading-overlay">טוען...</div>}
+      {loading && <div className="loading-overlay" style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '1000px',
+        height: '600px',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 24,
+        zIndex: 10
+      }}>טוען נתונים...</div>}
       {showResolutionSelector && (
         <ResolutionSelector
           onSelect={onResolutionSelect}
           onCancel={() => setShowResolutionSelector(false)}
         />
       )}
-      {zoomData && <ZoomedHeatmap data={zoomData} />}
       {historyStack.length > 0 && (
         <button className="undo-button" onClick={onUndo} title="חזור">
           <UndoIcon /> חזור
