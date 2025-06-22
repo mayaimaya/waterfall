@@ -19,12 +19,12 @@ interface Props {
     setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>; // Adjust type as
 }
 const GraphsDialog: React.FC<Props> = (props:Props) => {
-    const { setOpen, sweepData, setSweepData, graphConfig, setGraphConfig } = props;
+    const { setOpen, sweepData, setSweepData, graphConfig, setGraphConfig, open } = props;
     const [enableDraw, setEnableDraw] = React.useState<boolean>(false);
 
     return (
         <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}> 
-            <Dialog open={true} fullWidth maxWidth="md">
+            <Dialog open={open} fullWidth maxWidth="md">
                 <DialogContent sx={{ p: 0, height: '90vh' }}>
                     <Box display="flex" height="100%">
                         <Dashboard sweepData={sweepData} setSweepData={setSweepData} graphConfig={graphConfig} setGraphConfig={setGraphConfig} />
