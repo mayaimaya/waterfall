@@ -2,7 +2,6 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [ "react",
-    "react-hooks",
     "@typescript-eslint",
     "jsx-a11y",
     "prettier",
@@ -13,7 +12,6 @@
     "plugin:prettier/recommended",
     "eslint:recommended",               // ESLint's core recommended rules.
     "plugin:react/recommended",         // React specific linting rules.
-    "plugin:react-hooks/recommended",   // Rules for React Hooks.
     "plugin:@typescript-eslint/eslint-recommended", // Disables ESLint rules that are handled by TypeScript.
     "plugin:@typescript-eslint/recommended",      // TypeScript specific recommended rules.
     "plugin:jsx-a11y/recommended",      // Accessibility rules for JSX.
