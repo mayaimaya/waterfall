@@ -1,11 +1,11 @@
-import { ChartXY, PointMarker, UIBackground } from "@arction/lcjs"
-import { RefObject } from "react"
+import { ChartXY, PointMarker, RectangleFigure, UIBackground } from "@arction/lcjs"
+import { MutableRefObject } from "react"
 
 
 export interface SweepData {
     [id: number] : {
         data: number[][]
-        captureTimes: string[]
+        captureTimes: number[]
 }
 }
 
@@ -30,11 +30,18 @@ export interface GraphConfig {
   endDate: string
 }
 
+export interface Dimensions {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 export interface EnableRectangleInteraction {
-  chart: ChartXY<PointMarker, UIBackground>
-  startPoint: RefObject<{ x: number; y: number } | null>
-  rectRef: RefObject<any>
-  rectDimensions: RefObject<any>
+  waterfallChart: ChartXY<PointMarker, UIBackground>
+  startPoint: MutableRefObject<{ x: number; y: number } | null>
+  rectRef: MutableRefObject< RectangleFigure | null> 
+  rectDimensions: MutableRefObject<Dimensions | null>
   setEnableDraw: (value: boolean) => void
   onSelectionComplete?: (selection: SelectionArea) => void
 }

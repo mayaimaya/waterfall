@@ -5,7 +5,7 @@ import { ThemeProvider } from '@mui/material'
 import { darkTheme, lightTheme } from './style/theme.ts'
 
 const App = () => {
-  const [mode, setMode] = useState<'light' | 'dark'>('dark');
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
   return (
     <>
     <ThemeProvider theme={mode === 'light' ? lightTheme : darkTheme}>

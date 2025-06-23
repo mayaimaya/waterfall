@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import numpy as np
 from starlette.middleware.cors import CORSMiddleware
 
@@ -21,23 +21,26 @@ app.add_middleware(
 @app.post("/get_data")
 def get_mock_data(request: RequestParams):
     try:
-        # Parse the time range
-        start_time = datetime.fromisoformat(request.startDate.replace("Z", ""))
-        end_time = datetime.fromisoformat(request.endDate.replace("Z", ""))
+        # המרה לזמן UTC
+        start_time = datetime.fromisoformat(request.startDate.replace("Z", "+00:00"))
+        end_time = datetime.fromisoformat(request.endDate.replace("Z", "+00:00"))
 
         if end_time <= start_time:
             return JSONResponse(status_code=400, content={"error": "End time must be after start time"})
 
-        # Calculate how many rows to generate (1 row per minute)
         delta = end_time - start_time
         num_rows = int(delta.total_seconds() // 60)
 
         if num_rows <= 0:
             return JSONResponse(status_code=400, content={"error": "Time range too short"})
 
-        # Generate mock data
         data = np.random.randint(-250, -199, size=(num_rows, 400)).tolist()
-        capture_times = [(start_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(num_rows)]
+
+        # ⏱️ החזרת captureTimes כמספרים (מילישניות מאז 1970 UTC)
+        capture_times = [
+            int((start_time + timedelta(minutes=i)).replace(tzinfo=timezone.utc).timestamp() * 1000)
+            for i in range(num_rows)
+        ]
 
         response = {
             request.id: {
