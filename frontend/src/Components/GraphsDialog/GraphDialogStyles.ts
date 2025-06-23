@@ -1,6 +1,6 @@
-import { makeStyles } from '@mui/styles'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()(() => ({
   dashboardContainer: {
     position: 'relative',
     width: '1000px',
@@ -10,6 +10,6 @@ const useStyles = makeStyles({
     width: '900px', 
     height: '600px'
   },
-})
+}))
 
 export default useStyles

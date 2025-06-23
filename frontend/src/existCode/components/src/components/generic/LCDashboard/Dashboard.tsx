@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { ReactNode, memo, useContext, useEffect } from 'react'
 import { lightningChart, emptyLine } from '@arction/lcjs'
-import { useTheme } from '@gauss/theme'
 
 import { sensorsToDisplayContext } from '../../WaterfallAnalysisMainPage/context/SensorsToDisplayContext'
 import { showLegendContext } from '../../WaterfallAnalysisMainPage/context/showLegendContext'
@@ -20,7 +19,7 @@ interface Props {
 const CONTAINER_ID = 'dashboard'
 
 const LCDashboard: React.FC<Props> = memo(({ rows, columns, children, graphsRef, isDataLoading }: Props) => {
-  const { classes } = useStyles({ ...useTheme(), columnNumber: columns })
+  const { classes } = useStyles()
 
   useEffect(() => {
     const dashboard = lightningChart().Dashboard({

@@ -1,4 +1,4 @@
-import { makeStyles } from '@mui/styles'
+import { makeStyles } from 'tss-react/mui'
 
 interface positionProps {
     left: number;
@@ -8,8 +8,8 @@ interface StylesProps {
     position: positionProps;        
 }
 
-const useStyles = makeStyles<{}, StylesProps>({
-    popupMenu: (props) => ({
+const useStyles = makeStyles<StylesProps>()((_, props: StylesProps) => ({
+    popupMenu: {
         position: 'absolute',
         left: props.position.left,
         top: props.position.top,
@@ -19,7 +19,7 @@ const useStyles = makeStyles<{}, StylesProps>({
         padding: 8,
         boxShadow: '0px 2px 8px rgba(0,0,0,0.15)',
         zIndex: 1000,
-    }),
+    },
     menuItem: {
         padding: 4,
         cursor: 'pointer',
@@ -28,6 +28,6 @@ const useStyles = makeStyles<{}, StylesProps>({
             backgroundColor: '#eee',
         },
     },
-});
+}));
 
 export default useStyles

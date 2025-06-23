@@ -7,37 +7,38 @@ import {
 } from '@arction/lcjs'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
-import { Sensor } from '../../../interfaces/sensor'
-import { showLegendContext } from '../../WaterfallAnalysisMainPage/context/showLegendContext'
+import { Location } from '../../../../../../Components/interfaces/interfaces'
 
 import { GraphsRef } from './types'
 
 interface Props {
-    x: number[]
-    y: number[]
-    times: number[]
-    z: number[][]
-    sensor: Sensor
-    startFreq: number
-    endFreq: number
-    graphsRef: React.MutableRefObject<GraphsRef>
-    rowIndex: number
-    columnIndex: number
-    heatmapLUT?: LUT | undefined
-    setGraphsState: React.Dispatch<React.SetStateAction<GraphsRef>>
+  x: number[]
+  y: number[]
+  times: number[]
+  z: number[][]
+  sensor: Location
+  startFreq: number
+  endFreq: number
+  graphsRef: React.MutableRefObject<GraphsRef>
+  rowIndex: number
+  columnIndex: number
+  heatmapLUT?: LUT | undefined
+  // setGraphsState: React.Dispatch<React.SetStateAction<GraphsRef>>
 }
 
 const LCHeatmap = ({
   graphsRef, endFreq, startFreq, sensor, x, y, times, z,
   columnIndex, rowIndex, heatmapLUT,
-  setGraphsState
+  // setGraphsState
 }: Props) => {
+  console.log('LCHeatmap', graphsRef, sensor, x, y, times, z, startFreq, endFreq)
   const vMinHeatmap = useMemo(() => z.length ? Math.min(...(z.map((d: number[]) => (Math.min(...d))))) + 1 : 0, [z])
   const vMaxHeatmap = useMemo(() => z.length ? Math.max(...(z.map((d: number[]) => (Math.max(...d))))) : 100, [z])
   const majorTicksGap = useMemo(() => Math.ceil(times.length / 5), [times])
   const minorTicksGap = useMemo(() => Math.ceil(times.length / 40), [times])
 
-  const { showLegend } = useContext(showLegendContext)
+  // const { showLegend } = useContext(showLegendContext)
+  const showLegend = true
 
   const [render, setRender] = useState(false)
 
@@ -50,7 +51,7 @@ const LCHeatmap = ({
       rowIndex,
       disableAnimations: true
     })
-      .setTitle(`${!z.length ? '- אין נתונים'.split('').reverse().join('') : ''} ${sensor.sensor.split('').reverse().join('')}`)
+      // .setTitle(`${!z.length ? '- אין נתונים'.split('').reverse().join('') : ''} ${sensor.sensor.split('').reverse().join('')}`)
       .setPadding({ left: 10 })
 
     const yAxis = chart?.getDefaultAxisY()
@@ -148,7 +149,7 @@ const LCHeatmap = ({
 
   const createLegend = useCallback((sensorId: number,
     chart: ChartXY<PointMarker, UIBackground> | undefined,
-    heatmap: HeatmapGridSeriesIntensityValues| undefined
+    heatmap: HeatmapGridSeriesIntensityValues | undefined
   ) => {
     if (!chart || !heatmap || !z.length || graphsRef.current[sensorId].legend) return
     const legend = chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
@@ -170,12 +171,12 @@ const LCHeatmap = ({
       chart,
       heatmap
     }
-    setGraphsState({
-      [sensor.id]: {
-        chart,
-        heatmap
-      }
-    })
+    // setGraphsState({
+    //   [sensor.id]: {
+    //     chart,
+    //     heatmap
+    //   }
+    // })
 
     createLegend(sensor.id, chart, heatmap)
     return () => {

@@ -25,7 +25,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
     })
 
     const [open, setOpen] = useState(false);
-    const classes = useStyles()
+    const {classes} = useStyles()
 
     useEffect(() => {
         new SweepsClient().getSweepData(graphConfig.locationId, graphConfig.startDate, graphConfig.endDate)

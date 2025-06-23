@@ -1,6 +1,6 @@
-import { makeStyles } from '@mui/styles'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()(() => ({
   dashboard: {
     width: '100%', 
     height: '100%'
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     backgroundColor: '#f0f0f0',
   },
-})
+}))
 
 export default useStyles
 

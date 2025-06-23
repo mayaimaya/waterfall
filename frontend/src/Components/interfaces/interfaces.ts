@@ -50,3 +50,7 @@ export const PSDStrategy = {
 } as const;
 
 export type PSDStrategy = typeof PSDStrategy[keyof typeof PSDStrategy];
+
+export interface Location {
+  id: number;     
+}

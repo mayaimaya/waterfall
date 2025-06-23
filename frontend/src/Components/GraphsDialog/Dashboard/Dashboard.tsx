@@ -13,18 +13,21 @@ import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
 import { GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
 import SweepsClient from '../../utils/backend'
 import useStyles from './DashboardStyles'
-import { createHeatmap } from './Heatmap/createHeatmap'
 import { enableRectangleInteraction } from './DrawResolution/rectangleInteraction'
+import LCHeatmap from '../../../existCode/components/src/components/generic/LCHeatmap/Heatmap'
+import { GraphsRef } from '../../../existCode/components/src/components/generic/LCHeatmap/types'
 
 interface DashboardProps {
-    sweepData?: SweepData
-    graphConfig: GraphConfig
-    setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
-    setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
+  sweepData?: SweepData
+  graphConfig: GraphConfig
+  setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
+  setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
 }
 
-const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
-  const { graphConfig, setGraphConfig, sweepData , setSweepData} = props
+const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
+  const { graphConfig, setGraphConfig, sweepData, setSweepData } = props
+  const graphsRef = useRef<GraphsRef>({ dashboard: undefined })
+  // const [graphsState, setGraphsState] = useState<GraphsRef>({})
 
   const sweepsClient = new SweepsClient()
   const [previousData, setPreviousData] = useState<SweepData | null>(null)
@@ -34,7 +37,7 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
   const [loading, setLoading] = useState(false)
 
   const { enableDraw, setEnableDraw } = useContext(DrawingContext)
-  const classes = useStyles()
+  const { classes } = useStyles()
 
 
 
@@ -55,15 +58,21 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       numberOfRows: 2,
       theme: Themes.darkGold,
     })
+    graphsRef.current.dashboard = dashboard
 
-    const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
+    const volumeArrX = Array.from({ length: graphConfig.endVolume - graphConfig.startVolume + 1 }, (_, i) => graphConfig.startVolume + i)
+    const timeArrY = sweepData[graphConfig.locationId].captureTimes.map((time: string) => new Date(time).getTime() - 1000 * 60 * 60 * 3) // Adjusting for timezone offset
+
     const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
+    // const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
 
-    createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-    createPsd(psdGraph, sweepData,graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+    // createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+    createPsd(psdGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
 
-    waterfallChartRef.current = heatmapGraph
+    // waterfallChartRef.current = {[graphConfig.startVolume] : undefined, d}
 
+    // LCHeatmap(heatmapGraph, graphConfig.endVolume, graphConfig.startVolume,
+    //   { id: 10 }, volumeArrX, timeArrY, timeArrY, heatmapGraph, 1, 1, undefined, sweepData, graphConfig)
 
     return () => {
       dashboard.dispose()
@@ -84,7 +93,7 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
         startPoint,
         rectRef,
         rectDimensions,
-        onSelectionComplete: (selection : SelectionArea) => {
+        onSelectionComplete: (selection: SelectionArea) => {
           setSelectedArea(selection)
           setResolutionPopupPos(selection.screenPosition)
         },
@@ -131,7 +140,33 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
 
   return (
     <div className={classes.dashboardContainer}>
-      <div ref={containerRef} className={classes.dashboard} />
+      <div
+        ref={containerRef}
+        className={classes.dashboard}
+      />
+      {sweepData && (
+        <LCHeatmap
+          endFreq={graphConfig.endVolume}
+          startFreq={graphConfig.startVolume}
+          sensor={{ id: graphConfig.locationId }}
+          x={Array.from(
+            { length: graphConfig.endVolume - graphConfig.startVolume + 1 },
+            (_, i) => graphConfig.startVolume + i
+          )}
+          y={sweepData[graphConfig.locationId].captureTimes.map((time) =>
+            new Date(time).getTime()
+          )}
+          times={sweepData[graphConfig.locationId].captureTimes.map((time) =>
+            new Date(time).getTime()
+          )}
+          z={sweepData[graphConfig.locationId].data}
+          columnIndex={0}
+          rowIndex={0}
+          heatmapLUT={undefined}
+          graphsRef={graphsRef}
+          // setGraphsState={setGraphsState}
+        />
+      )}
 
       {resolutionPopupPos && (
         <ResolutionPopupMenu
@@ -144,10 +179,16 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
           }}
         />
       )}
-     {previousData && (
+
+      {previousData && (
         <IconButton
           onClick={handleUndo}
-          style={{ position: 'absolute', top: 10, left: 10, backgroundColor: 'white' }}
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            backgroundColor: 'white',
+          }}
         >
           <UndoIcon />
         </IconButton>
