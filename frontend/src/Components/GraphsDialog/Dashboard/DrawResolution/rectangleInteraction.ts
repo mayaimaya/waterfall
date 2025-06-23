@@ -42,26 +42,25 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
   const rectSeries = waterfallChart.addRectangleSeries()
 
   
+  /**
+   * Translates a pointer event's coordinates to the chart's coordinate system.
+   *
+   * @param event - The pointer event containing the screen coordinates.
+   * @returns An object with the translated `x` and `y` coordinates relative to the chart.
+   */
   const getCoordinates = (event: PointerEvent) => {
-    const bounds = waterfallChart.engine.container.getBoundingClientRect()
-    const x = event.clientX - bounds.left
-    const y = event.clientY - bounds.top
+    const translated = waterfallChart.translateCoordinate(event, waterfallChart.coordsAxis)
 
-    const xVal =
-      axisX.getInterval().start +
-      (x / bounds.width) *
-        (axisX.getInterval().end - axisX.getInterval().start)
-
-    const yVal =
-      axisY.getInterval().start +
-      ((bounds.height - y) / bounds.height) *
-        (axisY.getInterval().end - axisY.getInterval().start)
-
-    return { x: xVal, y: yVal }
+    return {
+      x: translated.x,
+      y: translated.y
+    }
   }
 
   const onPointerDown = (e: PointerEvent) => {
     const start = getCoordinates(e)
+        console.log("start", start)
+
     startPoint.current = start
     rectSeries.clear()
 
@@ -123,7 +122,7 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
     if (!rectDimensions.current) return
 
     const { x, y, width, height } = rectDimensions.current
-    const selection = {
+    const selection= {
       startTime: y,
       endTime: y + height,
       minVolume: x,

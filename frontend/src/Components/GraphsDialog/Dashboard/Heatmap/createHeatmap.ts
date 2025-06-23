@@ -32,7 +32,8 @@ export const createHeatmap = (
 
     const maxTime = Math.max(...captureTimesRaw) - TIME_CONSTANT
     const minTime = Math.min(...captureTimesRaw) - TIME_CONSTANT
-
+    
+    const stepX = (endVolume - startVolume) / columns
     const stepY = (maxTime - minTime) / (rows - 1)
 
    
@@ -50,9 +51,9 @@ export const createHeatmap = (
     chart.addHeatmapGridSeries({
         columns,
         rows,
-        start: { x: startVolume, y: minTime },
+        start: { x: startVolume + stepX / 2, y: minTime },
         step: {
-            x: (endVolume - startVolume) / columns,
+            x: stepX,
             y: stepY,
         },
         dataOrder: 'rows',
