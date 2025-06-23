@@ -54,15 +54,15 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
     const dashboard = lightningChart().Dashboard({
       container: containerRef.current,
       numberOfColumns: 1,
-      numberOfRows: 2,
+      numberOfRows: 1,
       theme: Themes.darkGold,
     })
 
     const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
-    const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
+    // const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
 
     createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-    createPsd(psdGraph, sweepData,graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
+    // createPsd(psdGraph, sweepData,graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
 
     waterfallChartRef.current = heatmapGraph
 

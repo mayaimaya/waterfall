@@ -15,7 +15,8 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
 
     const [sweepData, setSweepData] = useState<SweepData | undefined>(undefined)
     const end = new Date();
-    const start = new Date(end.getTime() - 60 * 60 * 1000);
+    const start = new Date(end.getTime() - 3 * 60 * 60 * 1000);
+
     const [graphConfig, setGraphConfig] = useState<GraphConfig>({
         locationId: 5,
         startVolume: 2000,

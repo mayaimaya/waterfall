@@ -17,11 +17,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 @app.post("/get_data")
 def get_mock_data(request: RequestParams):
     try:
-        # Parse the time range
         start_time = datetime.fromisoformat(request.startDate.replace("Z", ""))
         end_time = datetime.fromisoformat(request.endDate.replace("Z", ""))
 
@@ -35,12 +33,10 @@ def get_mock_data(request: RequestParams):
         if num_rows <= 0:
             return JSONResponse(status_code=400, content={"error": "Time range too short"})
 
-        # Generate mock data
         data = np.random.randint(-250, -199, size=(num_rows, 400)).tolist()
-        base_time = datetime.utcnow()
-        capture_times = [(base_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(34)]
 
-        # capture_times = [(start_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(num_rows)]
+        # ✅ כאן התיקון החשוב:
+        capture_times = [(start_time + timedelta(minutes=i)).isoformat(timespec='milliseconds') + "Z" for i in range(num_rows)]
 
         response = {
             request.id: {
@@ -53,6 +49,7 @@ def get_mock_data(request: RequestParams):
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host=HOST, port=PORT, reload=True)
