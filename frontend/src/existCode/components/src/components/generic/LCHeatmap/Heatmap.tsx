@@ -26,6 +26,12 @@ interface Props {
   // setGraphsState: React.Dispatch<React.SetStateAction<GraphsRef>>
 }
 
+const X_AXIS_TITLE = 'Volume (mL)'
+const Y_AXIS_TITLE = 'Time'
+const LUT_MIN_VALUE = -200
+const LUT_MAX_VALUE = -250
+const LEGENDS_TEXT = 'Heatmap'
+
 const LCHeatmap = ({
   graphsRef, endFreq, startFreq, sensor, x, y, times, z,
   columnIndex, rowIndex, heatmapLUT,
@@ -36,6 +42,8 @@ const LCHeatmap = ({
   const vMaxHeatmap = useMemo(() => z.length ? Math.max(...(z.map((d: number[]) => (Math.max(...d))))) : 100, [z])
   const majorTicksGap = useMemo(() => Math.ceil(times.length / 5), [times])
   const minorTicksGap = useMemo(() => Math.ceil(times.length / 40), [times])
+  const rows = y.length
+  const columns = z[0].length
 
   // const { showLegend } = useContext(showLegendContext)
   const showLegend = true
@@ -49,18 +57,18 @@ const LCHeatmap = ({
     const chart = dashboard?.createChartXY({
       columnIndex,
       rowIndex,
-      disableAnimations: true
     })
       // .setTitle(`${!z.length ? '- אין נתונים'.split('').reverse().join('') : ''} ${sensor.sensor.split('').reverse().join('')}`)
-      .setPadding({ left: 10 })
+      .setPadding({ left: 20 })
 
-    const yAxis = chart?.getDefaultAxisY()
-    yAxis && yAxis
-      .setTickStrategy(AxisTickStrategies.Empty)
-      .setScrollStrategy(AxisScrollStrategies.progressive)
-      .setInterval({ start: y[0], end: y[y.length - 1] })
+    chart?.getDefaultAxisY()
+      .setTickStrategy(AxisTickStrategies.DateTime)
+      .setTitle(Y_AXIS_TITLE)
       .setMouseInteractions(true)
+      .setInterval({ start: Math.min(...y), end: Math.max(...y) })
+
     const ticks: CustomTick[] = []
+    const yAxis = chart?.getDefaultAxisX()
     yAxis && times.forEach((time, index) => {
       if (index % majorTicksGap === 0 && index !== 0) {
         const tick = yAxis
@@ -82,7 +90,10 @@ const LCHeatmap = ({
       ticks
     }
     chart?.getDefaultAxisX()
+      .setScrollStrategy(AxisScrollStrategies.expansion)
       .setInterval({ start: startFreq, end: endFreq })
+      .setTickStrategy(AxisTickStrategies.Numeric)
+      .setTitle(X_AXIS_TITLE)
       .setMouseInteractions(true)
 
     return chart
@@ -113,10 +124,12 @@ const LCHeatmap = ({
           Themes.light.examples.spectrogramColorPalette
         )
       })
+    const stepX = (endFreq - startFreq) / columns
+    const stepY = (Math.max(...y) - Math.min(...y)) / (rows - 1)
 
     const heatMap: HeatmapGridSeriesIntensityValues = chart?.addHeatmapGridSeries({
-      rows: y.length ?? 10,
-      columns: z.length && z[0].length ? z[0].length : 3772,
+      rows,
+      columns,
       dataOrder: 'rows',
       start: {
         x: Math.min(...x),
@@ -125,7 +138,12 @@ const LCHeatmap = ({
       end: {
         x: Math.max(...x),
         y: Math.max(...y)
-      }
+      },
+      step: {
+        x: stepX,
+        y: stepY,
+      },
+      heatmapDataType: 'intensity',
     })
       .setFillStyle(new PalettedFill({
         lut: cmap
@@ -138,6 +156,10 @@ const LCHeatmap = ({
       //  makes the data colorfull befire interacting.
       .setWireframeStyle(emptyLine)
       .setName('')
+    heatMap.onMouseDoubleClick(() => {
+      chart.getDefaultAxisX().setInterval({ start: startFreq, end: endFreq })
+      chart.getDefaultAxisY().setInterval({ start: y[0], end: y[y.length - 1] })
+    })
 
     return heatMap
   }, [y, x, z,
@@ -222,9 +244,9 @@ const LCHeatmap = ({
     }
   }, [
     showLegend,
-    graphsRef, sensor,
-    rowIndex,
-    columnIndex
+    // graphsRef, sensor,
+    // rowIndex,
+    // columnIndex
   ])
   return null
 }
