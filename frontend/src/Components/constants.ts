@@ -1,1 +1,1 @@
-export const TIME_CONSTANT =0
+export const TIME_CONSTANT = 1000000000000 * 1.7

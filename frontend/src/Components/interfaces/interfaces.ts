@@ -5,7 +5,7 @@ import { MutableRefObject } from "react"
 export interface SweepData {
     [id: number] : {
         data: number[][]
-        captureTimes: string[]
+        captureTimes: number[]
 }
 }
 

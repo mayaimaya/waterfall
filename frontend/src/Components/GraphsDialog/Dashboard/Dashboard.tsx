@@ -19,6 +19,7 @@ import SweepsClient from '../../utils/backend'
 import useStyles from './DashboardStyles'
 import { createHeatmap } from './Heatmap/createHeatmap'
 import { enableRectangleInteraction } from './DrawResolution/rectangleInteraction'
+import { TIME_CONSTANT } from '../../constants'
 
 interface DashboardProps {
     sweepData?: SweepData
@@ -105,8 +106,8 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       setLoading(true)
       setPreviousData(sweepData || null)
       console.log('Fetching new data for selection:', selection, 'with resolution:', resolution)
-      const startDate = new Date(selection.startTime).toISOString()
-      const endDate = new Date(selection.endTime ).toISOString()
+      const startDate = new Date(selection.startTime).toISOString() + TIME_CONSTANT
+      const endDate = new Date(selection.endTime ).toISOString() + TIME_CONSTANT
       const response = await sweepsClient.getSweepData(graphConfig.locationId, startDate, endDate)
       setSweepData(response)
       setGraphConfig((prevConfig) => ({
