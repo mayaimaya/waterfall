@@ -22,6 +22,9 @@ export const createHeatmap = (chart: ChartXY, sweepData: SweepData, locationId: 
 
     const maxValue = Math.max(...sweepData[locationId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
     const minValue = Math.min(...sweepData[locationId].captureTimes.map((date: string) => new Date(date).getTime())) - TIME_CONSTANT
+    
+    // const vMinHeatmap = useMemo(() => z.length ? Math.min(...(z.map((d: number[]) => (Math.min(...d))))) + 1 : 0, [z])
+    // const vMaxHeatmap = useMemo(() => z.length ? Math.max(...(z.map((d: number[]) => (Math.max(...d))))) : 100, [z])
 
     chart.getDefaultAxisX()
         .setInterval({ start: startVolume, end: endVolume })

@@ -1,29 +1,28 @@
-interface PSDPoint {
-    x: number;
-    y: number;
-}
+import { PSDPoint, PSDStrategy } from "../interfaces/interfaces";
 
-export const computeChunkAveragedPSD = (
+export const calcPsdData = (
     data: number[][],
     startFrequency: number,
     endFrequency: number,
+    strategy: PSDStrategy 
 ): PSDPoint[] => {
-    const flattened = data.flat()
-    const chunkSize = (endFrequency - startFrequency) / flattened.length;
-    console.log('Chunk size:', chunkSize);
-    // const frequencyStep = (endFrequency - startFrequency) / totalChunks;
-    
-    const averagedPsd: PSDPoint[] = [];
+    const flattened = data.flat();
+    const totalChunks = endFrequency - startFrequency + 1;
+    const chunkSize = flattened.length / totalChunks;
+    return Array.from({ length: totalChunks }, (_, volumeIndex) => {
+        const start = Math.floor(volumeIndex * chunkSize);
+        const end = volumeIndex === totalChunks - 1
+            ? flattened.length
+            : Math.floor((volumeIndex + 1) * chunkSize);
+        const chunk = flattened.slice(start, end);
+        const value = strategy === PSDStrategy.Mean
+            ? chunk.reduce((sum, val) => sum + val, 0) / chunk.length
+            : Math.max(...chunk);
 
-    // for (let i = 0; i < flattened.length; i += chunkSize) {
-    //     const chunk = flattened.slice(i, i + chunkSize);
-    //     const avg = chunk.reduce((sum, val) => sum + val, 0) / chunk.length;
-
-    //     averagedPsd.push({
-    //         x: startFrequency + (i / chunkSize) * frequencyStep,
-    //         y: avg,
-    //     });
-    // }
-
-    return averagedPsd;
+        return {
+            x: startFrequency + volumeIndex,
+            y: value,
+        };
+    });
 };
+

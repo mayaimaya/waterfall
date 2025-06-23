@@ -24,7 +24,7 @@ const GraphsDialog: React.FC<Props> = (props:Props) => {
 
     return (
         <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}> 
-            <Dialog open={open} fullWidth maxWidth="md">
+            <Dialog open={true} fullWidth maxWidth="lg">
                 <DialogContent sx={{ p: 0, height: '90vh' }}>
                     <Box display="flex" height="100%">
                         <Dashboard sweepData={sweepData} setSweepData={setSweepData} graphConfig={graphConfig} setGraphConfig={setGraphConfig} />

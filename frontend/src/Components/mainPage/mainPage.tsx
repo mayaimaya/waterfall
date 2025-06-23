@@ -19,7 +19,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
     const [graphConfig, setGraphConfig] = useState<GraphConfig>({
         locationId: 5,
         startVolume: 2000,
-        endVolume: 3000,
+        endVolume: 3005,
         startDate: start.toISOString(),
         endDate: end.toISOString(),
     })

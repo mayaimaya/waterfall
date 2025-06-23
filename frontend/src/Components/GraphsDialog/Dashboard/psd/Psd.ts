@@ -4,7 +4,7 @@ import {
     LegendBoxBuilders,
 } from '@arction/lcjs';
 import { SweepData } from '../../../interfaces/interfaces';
-import { computeChunkAveragedPSD } from '../../../utils/utiles';
+import { calcPsdData } from '../../../utils/utiles';
 
 const X_AXIS_TITLE = 'Frequency (Hz)';
 const Y_AXIS_TITLE = 'Power (dB)';
@@ -22,9 +22,9 @@ export const createPsd = (
     const columns = sweepData[locationId].data[0].length;
 
     const VolumeStep = (endFrequency - startFrequency) / columns;
-
+    const strategy = 'mean'; // or 'max' based on your requirement
     // We'll average the power across all sweeps (rows) per frequency point (column)
-    const averagedPsd: { x: number, y: number }[] = computeChunkAveragedPSD(sweepData[locationId].data, startFrequency, endFrequency);
+    const averagedPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, strategy);
 
     // sweepData[locationId].data.forEach((packet: number[], packetNum: number) => {
     //     let sum = 0
