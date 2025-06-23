@@ -7,15 +7,15 @@ import { EnableRectangleInteraction } from "../../../interfaces/interfaces"
 
 
 /**
- * Enables interactive rectangle selection on a chart component.
+ * Enables interactive rectangle selection on a waterfallChart component.
  *
- * This function attaches pointer event listeners to the chart's container,
+ * This function attaches pointer event listeners to the waterfallChart's container,
  * allowing users to draw a rectangle by clicking and dragging. The rectangle's
- * coordinates and dimensions are calculated relative to the chart's axes.
+ * coordinates and dimensions are calculated relative to the waterfallChart's axes.
  * When the selection is completed (pointer up - the client finish to draw the rectangle ), the selected area is reported
  * via the `onSelectionComplete` callback.
  *
- * @param chart - The chart instance to attach the interaction to.
+ * @param waterfallChart - The waterfallChart instance to attach the interaction to.
  * @param startPoint - A mutable ref object to store the starting point of the rectangle.
  * @param rectRef - A mutable ref object to store the current rectangle instance.
  * @param rectDimensions - A mutable ref object to store the rectangle's dimensions.
@@ -28,7 +28,7 @@ import { EnableRectangleInteraction } from "../../../interfaces/interfaces"
  */
 export const enableRectangleInteraction = (props: EnableRectangleInteraction) => {
   const {
-    chart,
+    waterfallChart,
     startPoint,
     rectRef,
     rectDimensions,
@@ -37,13 +37,13 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
   } = props
 
 
-  const axisX = chart.getDefaultAxisX()
-  const axisY = chart.getDefaultAxisY()
-  const rectSeries = chart.addRectangleSeries()
+  const axisX = waterfallChart.getDefaultAxisX()
+  const axisY = waterfallChart.getDefaultAxisY()
+  const rectSeries = waterfallChart.addRectangleSeries()
 
   
   const getCoordinates = (event: PointerEvent) => {
-    const bounds = chart.engine.container.getBoundingClientRect()
+    const bounds = waterfallChart.engine.container.getBoundingClientRect()
     const x = event.clientX - bounds.left
     const y = event.clientY - bounds.top
 
@@ -130,7 +130,7 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
       maxVolume: x + width,
       
     }
-    const bounds = chart.engine.container.getBoundingClientRect()
+    const bounds = waterfallChart.engine.container.getBoundingClientRect()
     const centerY = y + height / 2
     const rightX = x + width
 
@@ -150,7 +150,7 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
     setEnableDraw(false)
   }
 
-  const container = chart.engine.container
+  const container = waterfallChart.engine.container
   container.addEventListener("pointerdown", onPointerDown)
   container.addEventListener("pointermove", onPointerMove)
   container.addEventListener("pointerup", onPointerUp)

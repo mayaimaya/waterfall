@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import {
+  ChartXY,
   lightningChart,
+  PointMarker,
+  RectangleFigure,
   Themes,
+  UIBackground,
 } from '@arction/lcjs'
 
 import CircularProgress from '@mui/material/CircularProgress'
@@ -10,7 +14,7 @@ import UndoIcon from '@mui/icons-material/Undo'
 import { createPsd } from './psd/Psd'
 import { DrawingContext } from '../../../context/drawingContext'
 import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
-import { GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
+import { Dimensions, GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
 import SweepsClient from '../../utils/backend'
 import useStyles from './DashboardStyles'
 import { createHeatmap } from './Heatmap/createHeatmap'
@@ -36,11 +40,9 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
   const { enableDraw, setEnableDraw } = useContext(DrawingContext)
   const classes = useStyles()
 
-
-
-  const waterfallChartRef = useRef<any>(null)
-  const rectRef = useRef<any>(null)
-  const rectDimensions = useRef<any>(null)
+  const waterfallChartRef = useRef<ChartXY<PointMarker, UIBackground> | null>(null)
+  const rectRef = useRef<RectangleFigure | null>(null)
+  const rectDimensions = useRef<Dimensions | null>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -64,22 +66,21 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
 
     waterfallChartRef.current = heatmapGraph
 
-
     return () => {
       dashboard.dispose()
     }
   }, [sweepData])
 
   useEffect(() => {
-    const chart = waterfallChartRef.current
-    if (!chart) return
+    const waterfallChart = waterfallChartRef.current
+    if (!waterfallChart) return
 
-    chart.setMouseInteractionRectangleZoom(!enableDraw)
-    chart.setMouseInteractions(!enableDraw)
+    waterfallChart.setMouseInteractionRectangleZoom(!enableDraw)
+    waterfallChart.setMouseInteractions(!enableDraw)
 
     if (enableDraw) {
       cleanupRef.current = enableRectangleInteraction({
-        chart,
+        waterfallChart,
         setEnableDraw,
         startPoint,
         rectRef,
@@ -105,15 +106,15 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       setPreviousData(sweepData || null)
       console.log('Fetching new data for selection:', selection, 'with resolution:', resolution)
       const startDate = new Date(selection.startTime).toISOString()
-      const endDate = new Date(selection.endTime).toISOString()
+      const endDate = new Date(selection.endTime ).toISOString()
       const response = await sweepsClient.getSweepData(graphConfig.locationId, startDate, endDate)
       setSweepData(response)
       setGraphConfig((prevConfig) => ({
         ...prevConfig,
         startVolume: selection.minVolume,
         endVolume: selection.maxVolume,
-        startDate: startDate,
-        endDate: endDate
+        // startDate: startDate,
+        // endDate: endDate
       }))
     } catch (error) {
       console.error('Error fetching new data:', error)

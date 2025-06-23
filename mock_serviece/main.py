@@ -37,7 +37,10 @@ def get_mock_data(request: RequestParams):
 
         # Generate mock data
         data = np.random.randint(-250, -199, size=(num_rows, 400)).tolist()
-        capture_times = [(start_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(num_rows)]
+        base_time = datetime.utcnow()
+        capture_times = [(base_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(34)]
+
+        # capture_times = [(start_time + timedelta(minutes=i)).isoformat() + "Z" for i in range(num_rows)]
 
         response = {
             request.id: {
