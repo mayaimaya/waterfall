@@ -1,9 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { ReactNode, memo, useContext, useEffect } from 'react'
 import { lightningChart, emptyLine } from '@arction/lcjs'
-
-import { sensorsToDisplayContext } from '../../WaterfallAnalysisMainPage/context/SensorsToDisplayContext'
-import { showLegendContext } from '../../WaterfallAnalysisMainPage/context/showLegendContext'
 import { GraphsRef } from '../LCHeatmap/types'
 
 import useStyles from './DashboardStyles'
