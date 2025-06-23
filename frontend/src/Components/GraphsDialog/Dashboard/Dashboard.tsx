@@ -28,6 +28,8 @@ interface DashboardProps {
     setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
 }
 
+const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
+
 const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
   const { graphConfig, setGraphConfig, sweepData , setSweepData} = props
 
@@ -106,16 +108,19 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       setLoading(true)
       setPreviousData(sweepData || null)
       console.log('Fetching new data for selection:', selection, 'with resolution:', resolution)
-      const startDate = new Date(selection.startTime).toISOString() + TIME_CONSTANT
-      const endDate = new Date(selection.endTime ).toISOString() + TIME_CONSTANT
+      const startDate = new Date(selection.startTime + TIME_CONSTANT).toISOString() 
+      const endDate = new Date(selection.endTime + TIME_CONSTANT).toISOString()
       const response = await sweepsClient.getSweepData(graphConfig.locationId, startDate, endDate)
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+
       setSweepData(response)
       setGraphConfig((prevConfig) => ({
         ...prevConfig,
         startVolume: selection.minVolume,
         endVolume: selection.maxVolume,
-        // startDate: startDate,
-        // endDate: endDate
+        startDate: startDate,
+        endDate: endDate
       }))
     } catch (error) {
       console.error('Error fetching new data:', error)
@@ -156,18 +161,21 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       )}
 
       {loading && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 2000,
-          }}
-        >
-          <CircularProgress />
-        </div>
-      )}
+  <div className={classes.loadingOverlay}>
+    <div className={classes.blurBackground} />
+    <div className={classes.loadingContent}>
+      <CircularProgress
+      size={60}
+      thickness={5}
+      color='secondary'
+    />
+      <div className={classes.loadingText}>
+      {LOADING_TEXT}
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   )
 }
