@@ -1,5 +1,5 @@
 // OptionsMenu.tsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -15,13 +15,18 @@ import RoomIcon from "@mui/icons-material/Room";
 import useStyles from "./OptionsMenuStyles";
 import CloseIcon from '@mui/icons-material/Close';
 import { DrawingContext } from "../../../context/drawingContext";
+import { boolean } from "mathjs";
+
+const TAGGING_STATE = 'מצב תיוג'
+const RESOLUTION_STATE = 'שנה רזולוציה'
 
 interface Props {
+    showPSD: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowPSD: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
-    const [selectedPSD, setSelectedPSD] = useState("PSD הצג");
-    const classes = useStyles();
+const OptionsMenu: React.FC<Props> = ({ showPSD, setOpen, setShowPSD}) => {
+    const { classes } = useStyles()
 
     const { enableDraw, setEnableDraw } = useContext(DrawingContext);
 
@@ -29,7 +34,9 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
         setEnableDraw(!enableDraw);
     }
 
-
+    const handlePSDOptionsClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setShowPSD(boolean(e.target.value))
+    }
 
     return (
         <Box className={classes.container}>
@@ -55,30 +62,27 @@ const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
 
             {/* Radio Group */}
             <RadioGroup
-                value={selectedPSD}
-                onChange={(e) => setSelectedPSD(e.target.value)}
+                value={showPSD}
+                onChange={(e) => handlePSDOptionsClick(e)}
                 className={classes.radioGroup}
             >
                 <FormControlLabel
-                    value="PSD הצג"
+                    value='true'
                     control={<Radio />}
                     label="PSD הצג"
                     className={classes.radioItem}
                 />
                 <FormControlLabel
-                    value="PSD נגן"
+                    value='false'
                     control={<Radio />}
                     label="PSD נגן"
                     className={classes.radioItem}
                 />
             </RadioGroup>
             <Divider />
-
-            {/* Buttons */}
             <Box className={classes.buttonGroup}>
-                <Button>מצב תצוגה</Button>
-
-                <Button onClick={handleDraw}>שנה תצוגה</Button>
+                <Button>{TAGGING_STATE}</Button>
+                <Button onClick={handleDraw}>{RESOLUTION_STATE}</Button>
             </Box>
         </Box>
     );

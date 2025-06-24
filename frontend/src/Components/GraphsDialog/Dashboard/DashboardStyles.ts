@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => ({
   dashboard: {
     width: '100%', 
-    height: '100%'
+    height: '100%',
   },
   dashboardContainer: {
     position: 'relative',

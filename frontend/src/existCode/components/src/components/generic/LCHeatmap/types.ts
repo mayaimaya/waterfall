@@ -31,7 +31,6 @@ export interface Graphs {
     psdGraph: PSDGraph
 }   
 export interface GraphsRef {
-    // [id: number]: WaterfallGraph
     dashboard?: Dashboard
     [id: number]: Graphs
 }

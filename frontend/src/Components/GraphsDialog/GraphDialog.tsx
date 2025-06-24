@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Dialog,
@@ -8,6 +8,7 @@ import { GraphConfig, SweepData } from '../interfaces/interfaces';
 import OptionsMenu from './OptionsMenu/OptionsMenu';
 import Dashboard from './Dashboard/Dashboard';
 import { DrawingProvider } from '../../context/drawingContext';
+import useStyles from './GraphDialogStyles';
 
 
 interface Props {
@@ -18,22 +19,22 @@ interface Props {
     graphConfig: GraphConfig; // Adjust type as needed
     setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>; // Adjust type as
 }
-const GraphsDialog: React.FC<Props> = (props:Props) => {
+const GraphsDialog: React.FC<Props> = (props: Props) => {
     const { setOpen, sweepData, setSweepData, graphConfig, setGraphConfig, open } = props;
-    const [enableDraw, setEnableDraw] = React.useState<boolean>(false);
+    const [enableDraw, setEnableDraw] = useState<boolean>(false);
+    const [showPSD, setShowPSD] = useState<boolean>(false)
 
+    const { classes } = useStyles()
     return (
-        <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}> 
+        <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}>
             <Dialog open={true} fullWidth maxWidth="lg">
-                <DialogContent sx={{ p: 0, height: '100vh' }}>
-                    <Box display="flex" height="100%">
-                        <Dashboard sweepData={sweepData} setSweepData={setSweepData} graphConfig={graphConfig} setGraphConfig={setGraphConfig} />
-                        <OptionsMenu setOpen={setOpen}/>
-                    </Box>
+                <DialogContent className={classes.dialogContent}>
+                    <Dashboard sweepData={sweepData} setSweepData={setSweepData} graphConfig={graphConfig} setGraphConfig={setGraphConfig} showPSD={showPSD}/>
+                    <OptionsMenu showPSD={showPSD} setOpen={setOpen} setShowPSD={setShowPSD} />
                 </DialogContent>
             </Dialog>
         </DrawingProvider>
-       
+
     );
 }
 export default GraphsDialog;

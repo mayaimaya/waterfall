@@ -194,11 +194,9 @@ const LCHeatmap = ({
     if (!graphsRef.current.dashboard) return
 
     const chart = handleCreateChart()
-    console.log("hereee");
 
     if (!chart) return
     const heatmap = createHeatMap(chart)
-    console.log("ppppp", graphsRef.current[sensor.id]);
 
     graphsRef.current[sensor.id].waterfallGraph = {
       chart,
@@ -213,16 +211,16 @@ const LCHeatmap = ({
 
     createLegend(sensor.id, chart, heatmap)
     return () => {
-      graphsRef.current[sensor.id].waterfallGraph.heatmap?.dispose()
-      graphsRef.current[sensor.id].waterfallGraph.chart?.dispose()
-      graphsRef.current[sensor.id].waterfallGraph.legend?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph?.heatmap?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph?.chart?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph?.legend?.dispose()
 
       graphsRef.current[sensor.id].waterfallGraph.heatmap = undefined
       graphsRef.current[sensor.id].waterfallGraph.chart = undefined
       graphsRef.current[sensor.id].waterfallGraph.legend = undefined
 
       if (!graphsRef.current[sensor.id].waterfallGraph.ticks) return
-      graphsRef.current[sensor.id].waterfallGraph.ticks?.forEach(tick => tick.dispose())
+      graphsRef.current[sensor.id]?.waterfallGraph.ticks?.forEach(tick => tick.dispose())
       graphsRef.current[sensor.id].waterfallGraph.ticks = undefined
     }
   }, [

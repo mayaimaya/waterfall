@@ -21,22 +21,24 @@ import { enableRectangleInteraction } from './DrawResolution/rectangleInteractio
 import LCHeatmap from '../../../existCode/components/src/components/generic/LCHeatmap/Heatmap'
 import { GraphsRef } from '../../../existCode/components/src/components/generic/LCHeatmap/types'
 import { TIME_CONSTANT } from '../../constants'
-import { createHeatmap } from './Heatmap/createHeatmap'
+import { Collapse } from '@mui/material'
+import { animateRowHeights } from '../../utils/graphsTransition'
+
+const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
 
 interface DashboardProps {
   sweepData?: SweepData
   graphConfig: GraphConfig
   setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
   setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
+  showPSD: boolean
 }
 
-// const [graphsState, setGraphsState] = useState<GraphsRef>({})
 
 const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
-  const { graphConfig, setGraphConfig, sweepData, setSweepData } = props
-  const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
+  const { graphConfig, setGraphConfig, sweepData, setSweepData, showPSD } = props
   const graphsRef = useRef<GraphsRef>({} as GraphsRef)
-  const [isDashboardReady, setIsDashboardReady] = useState(false);
+  const [graphsState, setGraphsState] = useState<GraphsRef>({} as GraphsRef)
 
   const sweepsClient = new SweepsClient()
   const [previousData, setPreviousData] = useState<SweepData | null>(null)
@@ -53,11 +55,11 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
   const rectDimensions = useRef<Dimensions | null>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     if (!containerRef.current || !sweepData) return
+    console.log(showPSD);
 
     const dashboard = lightningChart().Dashboard({
       container: containerRef.current,
@@ -65,15 +67,27 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
       numberOfRows: 2,
       theme: Themes.darkGold,
     })
+
     graphsRef.current.dashboard = dashboard
-    setIsDashboardReady(true); // trigger rerender when dashboard is ready
-
+    setGraphsState(prev => ({ ...prev, dashboard }))
+    if (!showPSD) {
+      dashboard.setRowHeight(0, 1);
+      dashboard.setRowHeight(1, 0)
+    }
     return () => {
+      graphsRef.current = {} as GraphsRef
       dashboard.dispose()
-      setIsDashboardReady(false); // reset if component unmounts
-
+      setGraphsState({} as GraphsRef)
     }
   }, [sweepData])
+
+  useEffect(() => {
+    graphsRef.current.dashboard &&
+      (showPSD ?
+        animateRowHeights(graphsRef.current.dashboard, [1, 0], [0.65, 0.35])
+        :
+        animateRowHeights(graphsRef.current.dashboard, [0.65, 0.35], [1, 0]))
+  }, [showPSD]);
 
   useEffect(() => {
     const waterfallChart = waterfallChartRef.current
@@ -164,17 +178,20 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
             rowIndex={0}
             heatmapLUT={undefined}
             graphsRef={graphsRef}
-          // setGraphsState={setGraphsState}
           />
-          <PDS
-            columnIndex={0}
-            rowIndex={1}
-            endFrequency={graphConfig.endVolume}
-            startFrequency={graphConfig.startVolume}
-            sensor={{ id: graphConfig.locationId }}
-            graphsRef={graphsRef}
-            sweepData={sweepData}
-          />
+          {showPSD &&
+            <Collapse in={showPSD} timeout={1000} unmountOnExit>
+              <PDS
+                columnIndex={0}
+                rowIndex={1}
+                endFrequency={graphConfig.endVolume}
+                startFrequency={graphConfig.startVolume}
+                sensor={{ id: graphConfig.locationId }}
+                graphsRef={graphsRef}
+                sweepData={sweepData}
+              />
+            </Collapse>
+          }
         </>
       )}
 
