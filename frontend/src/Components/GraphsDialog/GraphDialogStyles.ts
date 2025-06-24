@@ -5,6 +5,7 @@ const useStyles = makeStyles()(() => ({
     height: '100vh',
     padding: 0,
     display: 'flex'
+    
   }
 }))
 
