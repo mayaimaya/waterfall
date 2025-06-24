@@ -155,7 +155,6 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
       {previousData && (
         <Fab
           onClick={handleUndo}
-          className={classes.undoButton}
           sx={{
             position: 'absolute',
             top: 10,

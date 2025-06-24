@@ -43,5 +43,5 @@ export interface EnableRectangleInteraction {
   rectRef: MutableRefObject< RectangleFigure | null> 
   rectDimensions: MutableRefObject<Dimensions | null>
   setEnableDraw: (value: boolean) => void
-  onSelectionComplete?: (selection: SelectionArea) => void
+  onSelectionComplete: (selection: SelectionArea) => void
 }

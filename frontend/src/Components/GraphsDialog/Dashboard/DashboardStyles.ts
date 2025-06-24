@@ -1,7 +1,6 @@
 import { makeStyles } from '@mui/styles'
-import { Theme } from '@mui/material'
 
-const useStyles = makeStyles<Theme>((theme) => ({
+const useStyles = makeStyles(() => ({
   dashboardContainer: {
     position: 'relative',
     width: '100%',
@@ -65,14 +64,14 @@ const useStyles = makeStyles<Theme>((theme) => ({
     color: 'white',
   }, 
 
-  undoButton: {
-  position: 'absolute',
-  top: 10,
-  left: 10,
-  zIndex: 1000,
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.getContrastText(theme.palette.primary.main),
-  },
+  // undoButton: {
+  // position: 'absolute',
+  // top: 10,
+  // left: 10,
+  // zIndex: 1000,
+  // backgroundColor: theme.palette.primary.main,
+  // color: theme.palette.getContrastText(theme.palette.primary.main),
+  // },
 }))
 
 export default useStyles
