@@ -11,6 +11,7 @@ import useStyles from './DashboardStyles'
 import { createDashboardWithGraphs } from './GraphRenderer'
 import { useDrawInteractionHandler } from './hooks/useDrawInteractionHandler'
 import { useFetchNewSweepData } from './hooks/useFetchNewSweepData'
+import LoadingProgress from './LoadingProgress/loadingProgress'
 
 interface DashboardProps {
   sweepData?: SweepData
@@ -19,7 +20,6 @@ interface DashboardProps {
   setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
 }
 
-const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
 
 const Dashboard: React.FC<DashboardProps> = ({ graphConfig, setGraphConfig, sweepData, setSweepData }) => {
   const classes = useStyles()
@@ -105,13 +105,7 @@ const Dashboard: React.FC<DashboardProps> = ({ graphConfig, setGraphConfig, swee
         )}
 
         {loading && (
-          <div className={classes.loadingOverlay}>
-            <div className={classes.blurBackground} />
-            <div className={classes.loadingContent}>
-              <CircularProgress size={60} thickness={5} color='secondary' />
-              <div className={classes.loadingText}>{LOADING_TEXT}</div>
-            </div>
-          </div>
+          <LoadingProgress/>
         )}
     </div>
   )
