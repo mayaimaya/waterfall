@@ -11,7 +11,7 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import UndoIcon from '@mui/icons-material/Undo'
-import { createPsd } from './psd/Psd'
+import PDS from './psd/Psd'
 import { DrawingContext } from '../../../context/drawingContext'
 import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
 import { Dimensions, GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
@@ -35,7 +35,8 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
   const { graphConfig, setGraphConfig, sweepData, setSweepData } = props
   const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
-  const graphsRef = useRef<GraphsRef>({ dashboard: undefined })
+  const graphsRef = useRef<GraphsRef>({} as GraphsRef)
+  const [isDashboardReady, setIsDashboardReady] = useState(false);
 
   const sweepsClient = new SweepsClient()
   const [previousData, setPreviousData] = useState<SweepData | null>(null)
@@ -65,29 +66,12 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
       theme: Themes.darkGold,
     })
     graphsRef.current.dashboard = dashboard
-
-    // const volumeArrX = Array.from({ length: graphConfig.endVolume - graphConfig.startVolume + 1 }, (_, i) => graphConfig.startVolume + i)
-    // const timeArrY = sweepData[graphConfig.locationId].captureTimes.map((time: string) => new Date(time).getTime() - 1000 * 60 * 60 * 3) // Adjusting for timezone offset
-
-
-    const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
-    // const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
-
-    // createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-    createPsd(psdGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-    // const heatmapGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap 1')
-    // const psdGraph = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('Heatmap 2')
-
-    // createHeatmap(heatmapGraph, sweepData, graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-    // createPsd(psdGraph, sweepData,graphConfig.locationId, graphConfig.startVolume, graphConfig.endVolume)
-
-    // waterfallChartRef.current = {[graphConfig.startVolume] : undefined, d}
-
-    // LCHeatmap(heatmapGraph, graphConfig.endVolume, graphConfig.startVolume,
-    //   { id: 10 }, volumeArrX, timeArrY, timeArrY, heatmapGraph, 1, 1, undefined, sweepData, graphConfig)
+    setIsDashboardReady(true); // trigger rerender when dashboard is ready
 
     return () => {
       dashboard.dispose()
+      setIsDashboardReady(false); // reset if component unmounts
+
     }
   }, [sweepData])
 
@@ -159,28 +143,39 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
         ref={containerRef}
         className={classes.dashboard}
       />
-      {sweepData && (
-        <LCHeatmap
-          endFreq={graphConfig.endVolume}
-          startFreq={graphConfig.startVolume}
-          sensor={{ id: graphConfig.locationId }}
-          x={Array.from(
-            { length: graphConfig.endVolume - graphConfig.startVolume + 1 },
-            (_, i) => graphConfig.startVolume + i
-          )}
-          y={sweepData[graphConfig.locationId].captureTimes.map((time) =>
-            new Date(time).getTime() - TIME_CONSTANT
-          )}
-          times={sweepData[graphConfig.locationId].captureTimes.map((time) =>
-            new Date(time).getTime() - TIME_CONSTANT
-          )}
-          z={sweepData[graphConfig.locationId].data}
-          columnIndex={0}
-          rowIndex={0}
-          heatmapLUT={undefined}
-          graphsRef={graphsRef}
-        // setGraphsState={setGraphsState}
-        />
+      {sweepData && graphsRef.current.dashboard && (
+        <>
+          <LCHeatmap
+            endFreq={graphConfig.endVolume}
+            startFreq={graphConfig.startVolume}
+            sensor={{ id: graphConfig.locationId }}
+            x={Array.from(
+              { length: graphConfig.endVolume - graphConfig.startVolume + 1 },
+              (_, i) => graphConfig.startVolume + i
+            )}
+            y={sweepData[graphConfig.locationId].captureTimes.map((time) =>
+              new Date(time).getTime() - TIME_CONSTANT
+            )}
+            times={sweepData[graphConfig.locationId].captureTimes.map((time) =>
+              new Date(time).getTime() - TIME_CONSTANT
+            )}
+            z={sweepData[graphConfig.locationId].data}
+            columnIndex={0}
+            rowIndex={0}
+            heatmapLUT={undefined}
+            graphsRef={graphsRef}
+          // setGraphsState={setGraphsState}
+          />
+          <PDS
+            columnIndex={0}
+            rowIndex={1}
+            endFrequency={graphConfig.endVolume}
+            startFrequency={graphConfig.startVolume}
+            sensor={{ id: graphConfig.locationId }}
+            graphsRef={graphsRef}
+            sweepData={sweepData}
+          />
+        </>
       )}
 
       {resolutionPopupPos && (

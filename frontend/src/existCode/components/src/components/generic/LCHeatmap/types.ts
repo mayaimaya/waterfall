@@ -21,9 +21,19 @@ export interface WaterfallGraph {
     ticks?: CustomTick[]
 }
 
+export interface PSDGraph {
+    chart?: ChartXY
+    heatmap?: HeatmapGridSeriesIntensityValues
+    legend?: LegendBox<UIBackground>
+}
+export interface Graphs {
+    waterfallGraph: WaterfallGraph
+    psdGraph: PSDGraph
+}   
 export interface GraphsRef {
-    [id: number]: WaterfallGraph
+    // [id: number]: WaterfallGraph
     dashboard?: Dashboard
+    [id: number]: Graphs
 }
 export interface Index {
     rowIndex: number

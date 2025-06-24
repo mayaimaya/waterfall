@@ -1,54 +1,84 @@
+import React, { useEffect } from 'react';
 import {
     ChartXY,
     AxisTickStrategies,
-    LegendBoxBuilders,
+    LegendBoxBuilders
 } from '@arction/lcjs';
-import { SweepData } from '../../../interfaces/interfaces';
+import { Location, SweepData } from '../../../interfaces/interfaces';
 import { calcPsdData } from '../../../utils/utiles';
+import { GraphsRef } from '../../../../existCode/components/src/components/generic/LCHeatmap/types';
 
 const X_AXIS_TITLE = 'Frequency (Hz)';
 const Y_AXIS_TITLE = 'Power (dB)';
 const LEGENDS_TEXT_MEAN = 'Mean PSD';
 const LEGENDS_TEXT_MAX = 'Max PSD';
 
-export const createPsd = (
-    chart: ChartXY,
-    sweepData: SweepData,
-    locationId: number,
-    startFrequency: number,
+interface Props {
+    graphsRef: React.MutableRefObject<GraphsRef>
+    startFrequency: number
     endFrequency: number
-): ChartXY => {
+    sweepData: SweepData
+    sensor: Location
+    rowIndex: number
+    columnIndex: number
+}
 
-    const strategy = 'mean';
-    const meanPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, strategy);
-    const maxPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, 'max');
+const PDS: React.FC<Props> = ({
+    graphsRef,
+    startFrequency,
+    endFrequency,
+    sweepData,
+    sensor,
+    rowIndex,
+    columnIndex
+}) => {
 
-    chart.getDefaultAxisX()
-        .setInterval({ start: startFrequency, end: endFrequency })
-        .setTickStrategy(AxisTickStrategies.Numeric)
-        .setTitle(X_AXIS_TITLE);
+    useEffect(() => {
+        const dashboard = graphsRef.current?.dashboard
+        if (!dashboard || !sweepData[sensor.id]) return;
+        console.log(dashboard,"here");
+        
+        const chart = dashboard.createChartXY({ columnIndex, rowIndex });
 
-    chart.getDefaultAxisY()
-        .setTitle(Y_AXIS_TITLE)
-        .setTickStrategy(AxisTickStrategies.Numeric)
+        const meanPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'mean');
+        const maxPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'max');
 
-    // Mean PSD series
-    const meanSeries = chart.addLineSeries()
-        .setName(LEGENDS_TEXT_MEAN)
-        .setStrokeStyle((stroke) => stroke.setThickness(2));
+        chart.getDefaultAxisX()
+            .setTitle(X_AXIS_TITLE)
+            .setTickStrategy(AxisTickStrategies.Numeric)
+            .setInterval({ start: startFrequency, end: endFrequency });
 
-    // Max PSD series
-    const maxSeries = chart.addLineSeries()
-        .setName(LEGENDS_TEXT_MAX)
-        .setStrokeStyle((stroke) => stroke.setThickness(2));
+        chart.getDefaultAxisY()
+            .setTitle(Y_AXIS_TITLE)
+            .setTickStrategy(AxisTickStrategies.Numeric);
 
+    //     // Create series
+        const meanSeries = chart.addLineSeries()
+            .setName(LEGENDS_TEXT_MEAN)
+            .setStrokeStyle(stroke => stroke.setThickness(2));
 
-    meanSeries.add(meanPsd);
-    maxSeries.add(maxPsd);
+        const maxSeries = chart.addLineSeries()
+            .setName(LEGENDS_TEXT_MAX)
+            .setStrokeStyle(stroke => stroke.setThickness(2));
 
-    chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
-        .add(meanSeries)
-        .add(maxSeries);
+        meanSeries.add(meanPsd);
+        maxSeries.add(maxPsd);
 
-    return chart;
+        chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
+            .add(meanSeries)
+            .add(maxSeries);
+
+        graphsRef.current[sensor.id].psdGraph = {
+            ...graphsRef.current[sensor.id].psdGraph,
+            chart
+        };
+
+        return () => {
+            chart?.dispose();
+        };
+    }, [graphsRef.current.dashboard]);
+
+    return null;
 };
+
+export default PDS;

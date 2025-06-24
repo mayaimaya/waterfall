@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { Location } from '../../../../../../Components/interfaces/interfaces'
 
-import { GraphsRef } from './types'
+import { Graphs, GraphsRef, WaterfallData } from './types'
 import { TIME_CONSTANT } from '../../../../../../Components/constants'
 
 interface Props {
@@ -54,6 +54,9 @@ const LCHeatmap = ({
   useEffect(() => setRender(prev => !prev), [rowIndex, columnIndex])
 
   const handleCreateChart = useCallback(() => {
+    if (!graphsRef.current[sensor.id]) {
+      graphsRef.current[sensor.id] = { waterfallGraph: {} } as Graphs;
+    }
     const dashboard = graphsRef.current.dashboard
     const chart = dashboard?.createChartXY({
       columnIndex,
@@ -73,8 +76,8 @@ const LCHeatmap = ({
       .setTitle(Y_AXIS_TITLE)
       .setMouseInteractions(true)
       .setInterval({ start: Math.min(...y), end: Math.max(...y) })
-      // .setThickness(80)  // או כל ערך קבוע
-      // .addCustomTick
+    // .setThickness(80)  // או כל ערך קבוע
+    // .addCustomTick
     const ticks: CustomTick[] = []
     const yAxis = chart?.getDefaultAxisY()
     yAxis && times.forEach((time, index) => {
@@ -92,9 +95,11 @@ const LCHeatmap = ({
         ticks.push(tick)
       }
     })
-    graphsRef.current[sensor.id] =
+    console.log("pppp");
+
+    graphsRef.current[sensor.id].waterfallGraph =
     {
-      ...graphsRef.current[sensor.id],
+      ...graphsRef.current[sensor.id].waterfallGraph,
       ticks
     }
     return chart
@@ -174,23 +179,28 @@ const LCHeatmap = ({
     chart: ChartXY<PointMarker, UIBackground> | undefined,
     heatmap: HeatmapGridSeriesIntensityValues | undefined
   ) => {
-    if (!chart || !heatmap || !z.length || graphsRef.current[sensorId].legend) return
+    if (!chart || !heatmap || !z.length || graphsRef.current[sensorId].waterfallGraph.legend) return
     const legend = chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
       .setTitle('')
       .add(heatmap)
       .setDraggingMode(2)
       .setAutoDispose({ type: 'max-width', maxWidth: 2 })
-    graphsRef.current[sensorId].legend = legend
+    graphsRef.current[sensorId].waterfallGraph.legend = legend
   }, [
     columnIndex,
     rowIndex])
 
   useEffect(() => {
     if (!graphsRef.current.dashboard) return
+
     const chart = handleCreateChart()
+    console.log("hereee");
+
     if (!chart) return
     const heatmap = createHeatMap(chart)
-    graphsRef.current[sensor.id] = {
+    console.log("ppppp", graphsRef.current[sensor.id]);
+
+    graphsRef.current[sensor.id].waterfallGraph = {
       chart,
       heatmap
     }
@@ -203,17 +213,17 @@ const LCHeatmap = ({
 
     createLegend(sensor.id, chart, heatmap)
     return () => {
-      graphsRef.current[sensor.id].heatmap?.dispose()
-      graphsRef.current[sensor.id].chart?.dispose()
-      graphsRef.current[sensor.id].legend?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph.heatmap?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph.chart?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph.legend?.dispose()
 
-      graphsRef.current[sensor.id].heatmap = undefined
-      graphsRef.current[sensor.id].chart = undefined
-      graphsRef.current[sensor.id].legend = undefined
+      graphsRef.current[sensor.id].waterfallGraph.heatmap = undefined
+      graphsRef.current[sensor.id].waterfallGraph.chart = undefined
+      graphsRef.current[sensor.id].waterfallGraph.legend = undefined
 
-      if (!graphsRef.current[sensor.id].ticks) return
-      graphsRef.current[sensor.id].ticks?.forEach(tick => tick.dispose())
-      graphsRef.current[sensor.id].ticks = undefined
+      if (!graphsRef.current[sensor.id].waterfallGraph.ticks) return
+      graphsRef.current[sensor.id].waterfallGraph.ticks?.forEach(tick => tick.dispose())
+      graphsRef.current[sensor.id].waterfallGraph.ticks = undefined
     }
   }, [
     graphsRef,
@@ -236,12 +246,12 @@ const LCHeatmap = ({
     ) return
     if (showLegend) {
       createLegend(sensor.id,
-        graphsRef.current[sensor.id]?.chart,
-        graphsRef.current[sensor.id]?.heatmap
+        graphsRef.current[sensor.id]?.waterfallGraph.chart,
+        graphsRef.current[sensor.id]?.waterfallGraph.heatmap
       )
-    } else if (graphsRef.current[sensor.id]?.legend) {
-      graphsRef.current[sensor.id]?.legend?.dispose()
-      graphsRef.current[sensor.id].legend = undefined
+    } else if (graphsRef.current[sensor.id]?.waterfallGraph.legend) {
+      graphsRef.current[sensor.id]?.waterfallGraph.legend?.dispose()
+      graphsRef.current[sensor.id].waterfallGraph.legend = undefined
     }
   }, [
     showLegend,
