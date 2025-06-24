@@ -9,7 +9,6 @@ import {
 } from '@arction/lcjs'
 
 import CircularProgress from '@mui/material/CircularProgress'
-import IconButton from '@mui/material/IconButton'
 import UndoIcon from '@mui/icons-material/Undo'
 import { Fab } from '@mui/material';
 
@@ -22,8 +21,7 @@ import useStyles from './DashboardStyles'
 import { createHeatmap } from './Heatmap/createHeatmap'
 import { enableRectangleInteraction } from './DrawResolution/rectangleInteraction'
 import { TIME_CONSTANT } from '../../constants'
-import { Undo } from '@mui/icons-material';
-import { lightTheme } from '../../../style/theme'
+
 
 interface DashboardProps {
     sweepData?: SweepData
@@ -39,7 +37,6 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
 
   const sweepsClient = new SweepsClient()
   const [previousData, setPreviousData] = useState<SweepData | null>(null)
-
   const [selectedArea, setSelectedArea] = useState<SelectionArea | null>(null)
   const [resolutionPopupPos, setResolutionPopupPos] = useState<{ left: number; top: number } | null>(null)
   const [loading, setLoading] = useState(false)
@@ -52,7 +49,6 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
   const rectDimensions = useRef<Dimensions | null>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
@@ -156,32 +152,37 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
           }}
         />
       )}
-     {previousData && (
-       <Fab
-    onClick={handleUndo}
-    style={{ position: 'absolute', top: 10, left: 10, backgroundColor : lightTheme.palette.primary.main }}
-    size="small" // Adjust size as needed
-  >
-    <UndoIcon />
-  </Fab>
-       
+      {previousData && (
+        <Fab
+          onClick={handleUndo}
+          className={classes.undoButton}
+          sx={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            backgroundColor: 'primary.main',
+            color: 'text.primary',
+            zIndex: 1000, 
+          }}
+          size="small"
+        >
+          <UndoIcon color='inherit' />
+        </Fab> 
       )}
 
       {loading && (
-  <div className={classes.loadingOverlay}>
-    <div className={classes.blurBackground} />
-    <div className={classes.loadingContent}>
-      <CircularProgress
-      size={60}
-      thickness={5}
-      color='secondary'
-    />
-      <div className={classes.loadingText}>
-      {LOADING_TEXT}
-      </div>
-    </div>
-  </div>
-)}
+        <div className={classes.loadingOverlay}>
+          <div className={classes.blurBackground} />
+          <div className={classes.loadingContent}>
+            <CircularProgress
+            size={60}
+            thickness={5}
+            color='secondary'
+            />
+            <div className={classes.loadingText}>{LOADING_TEXT}</div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

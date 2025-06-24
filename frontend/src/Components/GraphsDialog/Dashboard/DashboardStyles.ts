@@ -1,6 +1,7 @@
 import { makeStyles } from '@mui/styles'
+import { Theme } from '@mui/material'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles<Theme>((theme) => ({
   dashboardContainer: {
     position: 'relative',
     width: '100%',
@@ -12,6 +13,7 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     backgroundColor: '#f0f0f0',
   },
+
   dashboard: {
     width: '100%',
     height: '100%',
@@ -21,7 +23,6 @@ const useStyles = makeStyles({
     position: 'relative',
   },
 
-  // שכבת overlay כהה ומטושטשת
   loadingOverlay: {
     position: 'absolute',
     top: 0,
@@ -59,9 +60,19 @@ const useStyles = makeStyles({
     fontWeight: 500,
     textAlign: 'center',
   },
+
   loadingSpinner: {
-  color: 'white',
-},
-})
+    color: 'white',
+  }, 
+
+  undoButton: {
+  position: 'absolute',
+  top: 10,
+  left: 10,
+  zIndex: 1000,
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.getContrastText(theme.palette.primary.main),
+  },
+}))
 
 export default useStyles

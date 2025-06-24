@@ -25,7 +25,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
         endDate: end.toISOString(),
     })
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const classes = useStyles()
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
     }, [])
 
 
-    return (
+    return ( 
         <div className={classes.mainContainer}>
                   <Button onClick={() => setMode(prev => prev === 'light' ? 'dark' : 'light')}>
                   Toggle  mode
