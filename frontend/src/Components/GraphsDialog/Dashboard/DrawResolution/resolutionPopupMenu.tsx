@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Menu, MenuItem } from '@mui/material'
 import { Position } from '../../../interfaces/interfaces'
-import useStyles from './resolutionPopupMenuStyles'
 
 interface Props {
   position: Position
@@ -11,10 +10,7 @@ interface Props {
 const resolutions = ['resolution 1', 'resolution 2', 'resolution 3', 'resolution 4']
 
 const ResolutionPopupMenu: React.FC<Props> = ({ position, onSelect }) => {
-  const anchorRef = useRef<HTMLDivElement | null>(null)
   const [open, setOpen] = useState(false)
-
-  const classes = useStyles({ left: position.left, top: position.top })
 
   useEffect(() => {
     setOpen(true)
@@ -30,20 +26,19 @@ const ResolutionPopupMenu: React.FC<Props> = ({ position, onSelect }) => {
   }
 
   return (
-    <>
-      <div ref={anchorRef} className={classes.virtualAnchor} />
       <Menu
-        anchorEl={anchorRef.current}
+        anchorReference="anchorPosition"
+        anchorPosition={{ top: position.top, left: position.left  + 10}}
         open={open}
-        onClose={handleClose}
-      >
+        onClose={handleClose} >
+
         {resolutions.map((res) => (
           <MenuItem key={res} onClick={() => handleSelect(res)}>
             {res}
           </MenuItem>
         ))}
       </Menu>
-    </>
+    
   )
 }
 

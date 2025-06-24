@@ -2,8 +2,11 @@ import {
   SolidFill,
   ColorRGBA,
   SolidLine,
+  CoordinateClient,
+  CoordinateXY,
 } from "@arction/lcjs"
 import { EnableRectangleInteraction } from "../../../interfaces/interfaces"
+import { TIME_CONSTANT } from "../../../constants"
 
 
 /**
@@ -59,8 +62,6 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
 
   const onPointerDown = (e: PointerEvent) => {
     const start = getCoordinates(e)
-        console.log("start", start)
-
     startPoint.current = start
     rectSeries.clear()
 
@@ -72,12 +73,12 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
     })
 
     rect.setFillStyle(
-      new SolidFill({ color: ColorRGBA(255, 255, 0, 50) })
+      new SolidFill({ color: ColorRGBA(255, 255, 255, 50) })
     )
     rect.setStrokeStyle(
       new SolidLine({
         thickness: 2,
-        fillStyle: new SolidFill({ color: ColorRGBA(255, 0, 0) }),
+        fillStyle: new SolidFill({ color: ColorRGBA(255, 255, 255) }),
       })
     )
 
@@ -118,6 +119,7 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
     }
   }
 
+
   const onPointerUp = () => {
     if (!rectDimensions.current) return
 
@@ -129,17 +131,30 @@ export const enableRectangleInteraction = (props: EnableRectangleInteraction) =>
       maxVolume: x + width,
       
     }
-    const bounds = waterfallChart.engine.container.getBoundingClientRect()
-    const centerY = y + height / 2
-    const rightX = x + width
 
-    const left = (((rightX - axisX.getInterval().start) / (axisX.getInterval().end - axisX.getInterval().start)) * bounds.width) + 20
-    const top = bounds.height - ((centerY - axisY.getInterval().start) / (axisY.getInterval().end - axisY.getInterval().start)) * bounds.height
+    //getting the pixel of the point right top -
+    // in order to locate the popup next to this point
+    const pixelAnchor = waterfallChart.translateCoordinate( {
+        x: selection.maxVolume,
+        y: selection.endTime 
+      },
+      waterfallChart.coordsAxis,
+      waterfallChart.coordsClient
+    )
 
+    const screenPosition = {
+      left: pixelAnchor.clientX,
+      top: pixelAnchor.clientY
+    }
+
+    console.log("popup position is", screenPosition)
 
     // 🔔 שולח את המידע החוצה
     if (onSelectionComplete) {
-      onSelectionComplete({... selection, screenPosition: { left, top }})
+      onSelectionComplete({
+        ... selection,
+        screenPosition
+      })
     }
 
     // איפוס
