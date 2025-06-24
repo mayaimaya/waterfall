@@ -15,10 +15,14 @@ export const calcPsdData = (
             ? flattened.length
             : Math.floor((volumeIndex + 1) * chunkSize);
         const chunk = flattened.slice(start, end);
+        // console.log(chunk);
+        
         const value = strategy === PSDStrategy.Mean
             ? chunk.reduce((sum, val) => sum + val, 0) / chunk.length
-            : Math.max(...chunk);
-
+            : Math.max(...chunk) + (-20 - Math.random() * -10);
+        // console.log("vvvalue", value);
+        // TODO: DELETE  (-20 - Math.random() * -10); I DID IT TO 
+        // MALE RANDON VALUES INSTEAD OF PARMANENT GRAPH
         return {
             x: startFrequency + volumeIndex,
             y: value,

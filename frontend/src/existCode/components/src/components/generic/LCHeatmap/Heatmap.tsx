@@ -10,6 +10,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Location } from '../../../../../../Components/interfaces/interfaces'
 
 import { GraphsRef } from './types'
+import { TIME_CONSTANT } from '../../../../../../Components/constants'
 
 interface Props {
   x: number[]
@@ -37,7 +38,7 @@ const LCHeatmap = ({
   columnIndex, rowIndex, heatmapLUT,
   // setGraphsState
 }: Props) => {
-  console.log('LCHeatmap', graphsRef, sensor, x, y, times, z, startFreq, endFreq)
+  // console.log('LCHeatmap', graphsRef, sensor, x, y, times, z, startFreq, endFreq)
   const vMinHeatmap = useMemo(() => z.length ? Math.min(...(z.map((d: number[]) => (Math.min(...d))))) + 1 : 0, [z])
   const vMaxHeatmap = useMemo(() => z.length ? Math.max(...(z.map((d: number[]) => (Math.max(...d))))) : 100, [z])
   const majorTicksGap = useMemo(() => Math.ceil(times.length / 5), [times])
@@ -61,14 +62,21 @@ const LCHeatmap = ({
       // .setTitle(`${!z.length ? '- אין נתונים'.split('').reverse().join('') : ''} ${sensor.sensor.split('').reverse().join('')}`)
       .setPadding({ left: 20 })
 
+    chart?.getDefaultAxisX()
+      .setInterval({ start: startFreq, end: endFreq })
+      .setTickStrategy(AxisTickStrategies.Numeric)
+      .setTitle(X_AXIS_TITLE)
+      .setMouseInteractions(true)
+
     chart?.getDefaultAxisY()
-      .setTickStrategy(AxisTickStrategies.DateTime)
+      // .setTickStrategy(AxisTickStrategies.DateTime)
       .setTitle(Y_AXIS_TITLE)
       .setMouseInteractions(true)
       .setInterval({ start: Math.min(...y), end: Math.max(...y) })
-
+      // .setThickness(80)  // או כל ערך קבוע
+      // .addCustomTick
     const ticks: CustomTick[] = []
-    const yAxis = chart?.getDefaultAxisX()
+    const yAxis = chart?.getDefaultAxisY()
     yAxis && times.forEach((time, index) => {
       if (index % majorTicksGap === 0 && index !== 0) {
         const tick = yAxis
@@ -89,13 +97,6 @@ const LCHeatmap = ({
       ...graphsRef.current[sensor.id],
       ticks
     }
-    chart?.getDefaultAxisX()
-      .setScrollStrategy(AxisScrollStrategies.expansion)
-      .setInterval({ start: startFreq, end: endFreq })
-      .setTickStrategy(AxisTickStrategies.Numeric)
-      .setTitle(X_AXIS_TITLE)
-      .setMouseInteractions(true)
-
     return chart
   }, [columnIndex,
     rowIndex,

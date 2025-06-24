@@ -8,7 +8,8 @@ import { calcPsdData } from '../../../utils/utiles';
 
 const X_AXIS_TITLE = 'Frequency (Hz)';
 const Y_AXIS_TITLE = 'Power (dB)';
-const LEGENDS_TEXT = 'PSD';
+const LEGENDS_TEXT_MEAN = 'Mean PSD';
+const LEGENDS_TEXT_MAX = 'Max PSD';
 
 export const createPsd = (
     chart: ChartXY,
@@ -18,26 +19,36 @@ export const createPsd = (
     endFrequency: number
 ): ChartXY => {
 
-    const strategy = 'mean'; // or 'max' based on your requirement
-    const averagedPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, strategy);
+    const strategy = 'mean';
+    const meanPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, strategy);
+    const maxPsd: { x: number, y: number }[] = calcPsdData(sweepData[locationId].data, startFrequency, endFrequency, 'max');
 
     chart.getDefaultAxisX()
         .setInterval({ start: startFrequency, end: endFrequency })
         .setTickStrategy(AxisTickStrategies.Numeric)
-        .setTitle(X_AXIS_TITLE)
+        .setTitle(X_AXIS_TITLE);
 
     chart.getDefaultAxisY()
         .setTitle(Y_AXIS_TITLE)
-        .setTickStrategy(AxisTickStrategies.Numeric);
+        .setTickStrategy(AxisTickStrategies.Numeric)
 
-    const psdSeries = chart.addLineSeries()
-        .setName(LEGENDS_TEXT)
+    // Mean PSD series
+    const meanSeries = chart.addLineSeries()
+        .setName(LEGENDS_TEXT_MEAN)
         .setStrokeStyle((stroke) => stroke.setThickness(2));
 
-    psdSeries.add(averagedPsd)
+    // Max PSD series
+    const maxSeries = chart.addLineSeries()
+        .setName(LEGENDS_TEXT_MAX)
+        .setStrokeStyle((stroke) => stroke.setThickness(2));
+
+
+    meanSeries.add(meanPsd);
+    maxSeries.add(maxPsd);
 
     chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
-        .add(psdSeries)
+        .add(meanSeries)
+        .add(maxSeries);
 
     return chart;
 };
