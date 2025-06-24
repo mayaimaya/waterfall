@@ -27,7 +27,7 @@ const GraphsDialog: React.FC<Props> = (props: Props) => {
     const { classes } = useStyles()
     return (
         <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}>
-            <Dialog open={true} fullWidth maxWidth="lg">
+            <Dialog open={open} fullWidth maxWidth="lg">
                 <DialogContent className={classes.dialogContent}>
                     <Dashboard sweepData={sweepData} setSweepData={setSweepData} graphConfig={graphConfig} setGraphConfig={setGraphConfig} showPSD={showPSD}/>
                     <OptionsMenu showPSD={showPSD} setOpen={setOpen} setShowPSD={setShowPSD} />

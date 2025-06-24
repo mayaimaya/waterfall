@@ -7,7 +7,6 @@ const useStyles = makeStyles()(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'end',
-    // Remove alignItems: 'end' here. Let individual items control their alignment.
     gap: '10px',
   },
   textLocation: {
@@ -42,6 +41,8 @@ const useStyles = makeStyles()(() => ({
   },
   divider: {
     width: '100%',
+    // to do
+    // borderColor: 
   }
 }));
 
