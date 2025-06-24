@@ -19,10 +19,13 @@ const ResolutionPopupMenu: React.FC<Props> = ({ position, onSelect }) => {
   const handleClose = () => {
     setOpen(false)
   }
-
-  const handleSelect = (res: string) => {
-    onSelect(res)
-    handleClose()
+ 
+  const handleSelect = (event: React.MouseEvent<HTMLLIElement>) => {
+    const res = event.currentTarget.dataset.resolution
+    if (res) {
+      onSelect(res)
+      handleClose()
+    }
   }
 
   return (
@@ -33,12 +36,12 @@ const ResolutionPopupMenu: React.FC<Props> = ({ position, onSelect }) => {
         onClose={handleClose} >
 
         {resolutions.map((res) => (
-          <MenuItem key={res} onClick={() => handleSelect(res)}>
+          <MenuItem key={res} data-resolution={res} onClick={handleSelect}>
             {res}
           </MenuItem>
-        ))}
+        ))
+        }
       </Menu>
-    
   )
 }
 

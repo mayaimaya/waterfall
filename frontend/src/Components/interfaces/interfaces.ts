@@ -37,11 +37,11 @@ export interface Dimensions {
   height: number
 }
 
-export interface EnableRectangleInteraction {
-  waterfallChart: ChartXY<PointMarker, UIBackground>
+export interface GenericRectangleInteractionProps {
+  chart: ChartXY<PointMarker, UIBackground> | null
   startPoint: MutableRefObject<{ x: number; y: number } | null>
   rectRef: MutableRefObject< RectangleFigure | null> 
-  rectDimensions: MutableRefObject<Dimensions | null>
+  rectDimensionsRef: MutableRefObject<Dimensions | null>
   setEnableDraw: (value: boolean) => void
   onSelectionComplete: (selection: SelectionArea) => void
 }
