@@ -11,6 +11,8 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import UndoIcon from '@mui/icons-material/Undo'
+import { Fab } from '@mui/material';
+
 import { createPsd } from './psd/Psd'
 import { DrawingContext } from '../../../context/drawingContext'
 import ResolutionPopupMenu from './DrawResolution/resolutionPopupMenu'
@@ -20,6 +22,8 @@ import useStyles from './DashboardStyles'
 import { createHeatmap } from './Heatmap/createHeatmap'
 import { enableRectangleInteraction } from './DrawResolution/rectangleInteraction'
 import { TIME_CONSTANT } from '../../constants'
+import { Undo } from '@mui/icons-material';
+import { lightTheme } from '../../../style/theme'
 
 interface DashboardProps {
     sweepData?: SweepData
@@ -107,6 +111,7 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
     try {
       setLoading(true)
       setPreviousData(sweepData || null)
+    
       console.log('Fetching new data for selection:', selection, 'with resolution:', resolution)
       const startDate = new Date(selection.startTime + TIME_CONSTANT).toISOString() 
       const endDate = new Date(selection.endTime + TIME_CONSTANT).toISOString()
@@ -152,12 +157,14 @@ const Dashboard :React.FC<DashboardProps> = (props:DashboardProps) => {
         />
       )}
      {previousData && (
-        <IconButton
-          onClick={handleUndo}
-          style={{ position: 'absolute', top: 10, left: 10, backgroundColor: 'white' }}
-        >
-          <UndoIcon />
-        </IconButton>
+       <Fab
+    onClick={handleUndo}
+    style={{ position: 'absolute', top: 10, left: 10, backgroundColor : lightTheme.palette.primary.main }}
+    size="small" // Adjust size as needed
+  >
+    <UndoIcon />
+  </Fab>
+       
       )}
 
       {loading && (

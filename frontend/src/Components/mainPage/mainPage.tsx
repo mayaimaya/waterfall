@@ -25,7 +25,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
         endDate: end.toISOString(),
     })
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const classes = useStyles()
 
     useEffect(() => {

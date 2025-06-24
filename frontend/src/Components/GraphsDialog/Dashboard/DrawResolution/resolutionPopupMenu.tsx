@@ -10,6 +10,7 @@ interface Props {
 const resolutions = ['resolution 1', 'resolution 2', 'resolution 3', 'resolution 4']
 
 const ResolutionPopupMenu: React.FC<Props> = ({ position, onSelect }) => {
+  console.log('ResolutionPopupMenu position:', position)
     const classes = useStyles({position})
   return (
     <div
