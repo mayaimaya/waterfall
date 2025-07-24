@@ -1,0 +1,45 @@
+import { ChartXY, CustomTick, Dashboard, HeatmapGridSeriesIntensityValues, HeatmapScrollingGridSeriesIntensityValues, LegendBox, UIBackground } from '@arction/lcjs'
+
+export interface DataPoint {
+    x: number
+    y: number
+}
+
+export interface Packet {
+    capture_time: string
+    data: number[]
+}
+
+export interface WaterfallData {
+    [id: number]: Packet[]
+}
+
+export interface WaterfallGraph {
+    chart?: ChartXY
+    heatmap?: HeatmapGridSeriesIntensityValues
+    legend?: LegendBox<UIBackground>
+    ticks?: CustomTick[]
+}
+
+export interface PSDGraph {
+    chart?: ChartXY
+    heatmap?: HeatmapGridSeriesIntensityValues
+    legend?: LegendBox<UIBackground>
+}
+export interface Graphs {
+    waterfallGraph: WaterfallGraph
+    psdGraph: PSDGraph
+}   
+export interface GraphsRef {
+    dashboard?: Dashboard
+    [id: number]: Graphs
+}
+export interface Index {
+    rowIndex: number
+    colIndex: number
+}
+
+export interface Frequency {
+    start: number
+    end: number
+}
