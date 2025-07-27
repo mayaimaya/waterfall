@@ -23,15 +23,15 @@ export interface WaterfallData {
 
 export interface WaterfallGraph {
   chart: ChartXY
-  heatmap?: HeatmapGridSeriesIntensityValues
-  legend?: LegendBox<UIBackground>
-  ticks?: CustomTick[]
+  // heatmap: HeatmapGridSeriesIntensityValues
+  // legend: LegendBox<UIBackground>
+  // ticks: CustomTick[]
 }
 
 export interface PSDGraph {
   chart: ChartXY
-  heatmap?: HeatmapGridSeriesIntensityValues
-  legend?: LegendBox<UIBackground>
+  // heatmap?: HeatmapGridSeriesIntensityValues
+  // legend?: LegendBox<UIBackground>
 }
 export interface Graphs {
   waterfallGraph: WaterfallGraph

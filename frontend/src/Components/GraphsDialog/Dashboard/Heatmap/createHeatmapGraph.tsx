@@ -1,6 +1,3 @@
-/* eslint-disable react/display-name */
-import { useMemo } from 'react'
-
 import {
   AxisTickStrategies,
   PalettedFill,
@@ -20,7 +17,6 @@ interface Props {
   chart: ChartXY
   startFreq: number
   endFreq: number
-
   x: number[]
   y: number[]
   times: number[]
@@ -41,27 +37,12 @@ export const createHeatmapGraph = ({
   x,
   heatmapLUT,
 }: Props) => {
-  const vMinHeatmap =
-    // useMemo(
-    //   () =>
-    z.length ? Math.min(...z.map((d: number[]) => Math.min(...d))) + 1 : 0
-  // [z],
-  // )
-  const vMaxHeatmap =
-    // useMemo(
-    //   () => (
-    z.length ? Math.max(...z.map((d: number[]) => Math.max(...d))) : 100
-  // [z],
-  // )
-  const majorTicksGap =
-    //  useMemo(() =>
+  const vMinHeatmap = z.length ? Math.min(...z.map((d: number[]) => Math.min(...d))) + 1 : 0
 
-    Math.ceil(times.length / 5)
-  // , [times])
-  const minorTicksGap =
-    // useMemo(() =>
-    Math.ceil(times.length / 40)
-  // s, [times])
+  const vMaxHeatmap = z.length ? Math.max(...z.map((d: number[]) => Math.max(...d))) : 100
+
+  const majorTicksGap = Math.ceil(times.length / 5)
+  const minorTicksGap = Math.ceil(times.length / 40)
   const rows = y.length
   const columns = z[0].length
 
@@ -116,13 +97,13 @@ export const createHeatmapGraph = ({
         ],
       }))
     : new LUT({
-      interpolate: true,
-      steps: regularColorSteps(
-        vMinHeatmap ?? -150.0,
-        vMaxHeatmap ?? 0.0,
-        Themes.light.examples.spectrogramColorPalette,
-      ),
-    })
+        interpolate: true,
+        steps: regularColorSteps(
+          vMinHeatmap ?? -150.0,
+          vMaxHeatmap ?? 0.0,
+          Themes.light.examples.spectrogramColorPalette,
+        ),
+      })
 
   const stepX = (endFreq - startFreq) / columns
   const stepY = (Math.max(...y) - Math.min(...y)) / (rows - 1)

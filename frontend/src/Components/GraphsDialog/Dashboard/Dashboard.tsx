@@ -1,20 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
-import { Dashboard, lightningChart, RectangleFigure, Themes } from '@arction/lcjs'
+import { Dashboard, RectangleFigure } from '@arction/lcjs'
 import UndoIcon from '@mui/icons-material/Undo'
 import { Fab } from '@mui/material'
 import { Collapse } from '@mui/material'
 
 import { DrawingContext } from '../../../context/drawingContext'
-import LCHeatmap from '../../../existCode/components/src/components/generic/LCHeatmap/Heatmap'
 import { DashboardRefs } from '../../../existCode/components/src/components/generic/LCHeatmap/types'
-import { TIME_CONSTANT } from '../../constants'
 import { Dimensions, GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
 import { animateRowHeights } from '../../utils/graphsTransition'
 
 import { createDashboardWithGraphs } from './createDashboard'
 import useStyles from './DashboardStyles'
 import { useDrawInteractionHandler } from './hooks/useDrawInteractionHandler'
+import { useFetchNewSweepData } from './hooks/useFetchNewSweepData'
 import LoadingProgress from './LoadingProgress/loadingProgress'
 import PSD from './psd/Psd'
 import ResolutionPopupMenu from './resolutionPopUpMenu/resolutionPopupMenu'
@@ -28,7 +27,8 @@ interface DashboardProps {
 }
 
 const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
-  const { graphConfig, sweepData, setSweepData, showPSD } = props
+  const { graphConfig, sweepData, setSweepData, showPSD, setGraphConfig } = props
+
   const graphsRef = useRef<DashboardRefs>({
     dashboard: {} as Dashboard,
     psdGraph: {},
@@ -58,6 +58,9 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
       sweepData,
       graphConfig,
     )
+    console.log('create new graphs dashbaord', heatmapChart, dashboard)
+    console.log(graphsRef.current)
+
     graphsRef.current.waterfallGraph.chart = heatmapChart
 
     graphsRef.current.dashboard = dashboard
@@ -67,50 +70,12 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
       dashboard.setRowHeight(1, 0)
     }
     return () => {
-      graphsRef.current = {} as DashboardRefs
       dashboard.dispose()
     }
   }, [sweepData])
 
-  useEffect(() => { }, [sweepData])
 
-  useEffect(() => {
-    graphsRef.current.dashboard &&
-      (showPSD
-        ? animateRowHeights(graphsRef.current.dashboard, [1, 0], [0.65, 0.35])
-        : animateRowHeights(graphsRef.current.dashboard, [0.65, 0.35], [1, 0]))
-  }, [showPSD])
-
-  // useEffect(() => {
-  //   const waterfallChart = waterfallChartRef.current
-  //   if (!waterfallChart) return
-
-  //   waterfallChart.setMouseInteractionRectangleZoom(!enableDraw)
-  //   waterfallChart.setMouseInteractions(!enableDraw)
-
-  //   if (enableDraw) {
-  //     cleanupRef.current = enableRectangleInteraction({
-  //       waterfallChart,
-  //       setEnableDraw,
-  //       startPoint,
-  //       rectRef,
-  //       rectDimensions,
-  //       onSelectionComplete: (selection: SelectionArea) => {
-  //         setSelectedArea(selection)
-  //         setResolutionPopupPos(selection.screenPosition)
-  //       },
-  //     })
-  //   }
-
-  //   return () => {
-  //     if (cleanupRef.current) {
-  //       cleanupRef.current()
-  //       cleanupRef.current = null
-  //     }
-  //   }
-  // }, [enableDraw])
-
-  // ניהול אינטראקציה של ציור מלבן
+  //manage interaction with paint rectangle
   useDrawInteractionHandler({
     enableDraw,
     setEnableDraw,
@@ -121,30 +86,16 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
     setResolutionPopupPos,
     setSelectedArea,
   })
-  // const fetchNewChartData = async (selection: SelectionArea, resolution: string) => {
-  //   try {
-  //     setLoading(true)
-  //     setPreviousData(sweepData || null)
-  //     console.log('Fetching new data for selection:', selection, 'with resolution:', resolution)
-  //     const startDate = new Date(selection.startTime + TIME_CONSTANT).toISOString()
-  //     const endDate = new Date(selection.endTime + TIME_CONSTANT).toISOString()
-  //     const response = await sweepsClient.getSweepData(graphConfig.locationId, startDate, endDate)
-  //     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  //     setSweepData(response)
-  //     setGraphConfig((prevConfig) => ({
-  //       ...prevConfig,
-  //       startVolume: selection.minVolume,
-  //       endVolume: selection.maxVolume,
-  //       startDate: startDate,
-  //       endDate: endDate,
-  //     }))
-  //   } catch (error) {
-  //     console.error('Error fetching new data:', error)
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
+  //fetch new data after choose resolution
+  const fetchNewChartData = useFetchNewSweepData({
+    setLoading,
+    setPreviousData,
+    sweepData,
+    graphConfig,
+    setGraphConfig,
+    setSweepData,
+  })
 
   const handleUndo = () => {
     if (previousData) {
@@ -152,6 +103,13 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
       setPreviousData(null)
     }
   }
+
+  useEffect(() => {
+    graphsRef.current.dashboard &&
+      (showPSD
+        ? animateRowHeights(graphsRef.current.dashboard, [1, 0], [0.65, 0.35])
+        : animateRowHeights(graphsRef.current.dashboard, [0.65, 0.35], [1, 0]))
+  }, [showPSD])
 
   return (
     <div className={classes.dashboardContainer}>
@@ -179,7 +137,7 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
           position={resolutionPopupPos}
           onSelect={(res: string) => {
             setResolutionPopupPos(null)
-            // fetchNewChartData(selectedArea, res)
+            fetchNewChartData(selectedArea, res)
           }}
         />
       )}

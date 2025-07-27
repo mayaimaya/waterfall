@@ -1,5 +1,3 @@
-import { config } from 'process'
-
 import { lightningChart, Themes } from '@arction/lcjs'
 
 import { TIME_CONSTANT } from '../../constants'

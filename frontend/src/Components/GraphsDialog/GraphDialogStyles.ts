@@ -4,9 +4,8 @@ const useStyles = makeStyles()(() => ({
   dialogContent: {
     height: '100vh',
     padding: 0,
-    display: 'flex'
-    
-  }
+    display: 'flex',
+  },
 }))
 
 export default useStyles

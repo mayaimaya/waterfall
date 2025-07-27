@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { ChartXY, AxisTickStrategies, LegendBoxBuilders } from '@arction/lcjs'
+import { AxisTickStrategies, LegendBoxBuilders } from '@arction/lcjs'
 
 import { DashboardRefs } from '../../../../existCode/components/src/components/generic/LCHeatmap/types'
 import { Location, SweepData } from '../../../interfaces/interfaces'

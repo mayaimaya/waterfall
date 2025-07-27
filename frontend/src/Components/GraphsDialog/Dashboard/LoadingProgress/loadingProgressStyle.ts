@@ -41,9 +41,7 @@ const useStyles = makeStyles(() => ({
 
   loadingSpinner: {
     color: 'white',
-  }, 
-
- 
+  },
 }))
 
 export default useStyles
