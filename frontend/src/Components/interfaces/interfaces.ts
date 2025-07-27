@@ -45,3 +45,19 @@ export interface GenericRectangleInteractionProps {
   setEnableDraw: (value: boolean) => void
   onSelectionComplete: (selection: SelectionArea) => void
 }
+
+export interface PSDPoint {
+    x: number;
+    y: number;
+}
+
+export const PSDStrategy = {
+  Mean: 'mean',
+  Max: 'max',
+} as const;
+
+export type PSDStrategy = typeof PSDStrategy[keyof typeof PSDStrategy];
+
+export interface Location {
+  id: number;     
+}

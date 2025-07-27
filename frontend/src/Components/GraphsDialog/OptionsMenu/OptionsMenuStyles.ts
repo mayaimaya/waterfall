@@ -1,35 +1,49 @@
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles(() => ({
-  container: {
+const useStyles = makeStyles()(() => ({
+  menuContainer: {
     width: '25%',
-    padding: '10px',
+    padding: '5px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'end',
-    gap: '15px',
+    gap: '10px',
   },
-  locationHeader: {
-    display: 'flex',
-    alignItems: 'start',
-    justifyContent: 'end',
-  },
-  textAlignRight: {
+  textLocation: {
     textAlign: 'right',
+    display: 'flex',
+    flexDirection: 'column',
   },
   radioGroup: {
-    alignItems: 'start',
+    alignSelf: 'end',
     direction: 'rtl',
   },
   radioItem: {
-    justifyContent: 'flex',
   },
   buttonGroup: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: '8px',
+    gap: '8px'
   },
+  locationHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'end'
+  },
+  locationIcon: {
+    width: '50px',
+    height: '50px',
+  },
+  locationName: {
+    fontSize: '16px',
+    fontWeight: 600
+  },
+  divider: {
+    width: '100%',
+    // to do
+    // borderColor: 
+  }
 }));
 
 export default useStyles;

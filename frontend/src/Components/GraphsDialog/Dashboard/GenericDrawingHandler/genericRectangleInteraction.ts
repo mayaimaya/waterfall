@@ -1,9 +1,6 @@
-import {
-  SolidFill,
-  ColorRGBA,
-  SolidLine,
-} from "@arction/lcjs"
-import { GenericRectangleInteractionProps } from "../../../interfaces/interfaces"
+import { SolidFill, ColorRGBA, SolidLine } from '@arction/lcjs'
+
+import { GenericRectangleInteractionProps } from '../../../interfaces/interfaces'
 
 /**
  * Enables interactive rectangle selection on a chart component.
@@ -26,19 +23,13 @@ import { GenericRectangleInteractionProps } from "../../../interfaces/interfaces
 
  */
 export const genericRectangleInteraction = (props: GenericRectangleInteractionProps) => {
-  const {
-    chart,
-    startPoint,
-    rectRef,
-    rectDimensionsRef,
-    setEnableDraw,
-    onSelectionComplete,
-  } = props
+  const { chart, startPoint, rectRef, rectDimensionsRef, setEnableDraw, onSelectionComplete } =
+    props
   if (!chart) return null
   const rectSeries = chart.addRectangleSeries()
   const fillColorRectangle = ColorRGBA(255, 255, 277, 70)
-  const strokeStyleRectangle = ColorRGBA(0,0,0)
-  
+  const strokeStyleRectangle = ColorRGBA(0, 0, 0)
+
   /**
    * Translates a pointer event's coordinates to the chart's coordinate system.
    *
@@ -50,7 +41,7 @@ export const genericRectangleInteraction = (props: GenericRectangleInteractionPr
 
     return {
       x: translated.x,
-      y: translated.y
+      y: translated.y,
     }
   }
 
@@ -62,7 +53,7 @@ export const genericRectangleInteraction = (props: GenericRectangleInteractionPr
    * stroke styles for the rectangle and stores references for further manipulation during pointer movement.
    *
    * @param e - The pointer event triggered by the user interaction.
-  */
+   */
   const onPointerDown = (e: PointerEvent) => {
     const start = getCoordinates(e)
     startPoint.current = start
@@ -77,14 +68,12 @@ export const genericRectangleInteraction = (props: GenericRectangleInteractionPr
     })
 
     //change the colors of the rectangle
-    rect.setFillStyle(
-      new SolidFill({ color: fillColorRectangle })
-    )
+    rect.setFillStyle(new SolidFill({ color: fillColorRectangle }))
     rect.setStrokeStyle(
       new SolidLine({
         thickness: 3,
         fillStyle: new SolidFill({ color: strokeStyleRectangle }),
-      })
+      }),
     )
 
     rectRef.current = rect
@@ -145,36 +134,34 @@ export const genericRectangleInteraction = (props: GenericRectangleInteractionPr
     if (!rectDimensionsRef.current) return
 
     const { x, y, width, height } = rectDimensionsRef.current
-    const selection= {
+    const selection = {
       startTime: y,
       endTime: y + height,
       minVolume: x,
       maxVolume: x + width,
-      
     }
 
     // getting the pixel of the point right top -
     // in order to locate the popup next to this point
-    const pixelAnchor = chart.translateCoordinate( 
+    const pixelAnchor = chart.translateCoordinate(
       {
         x: selection.maxVolume,
-        y: selection.endTime 
+        y: selection.endTime,
       },
       chart.coordsAxis,
-      chart.coordsClient
+      chart.coordsClient,
     )
 
     const screenPosition = {
       left: pixelAnchor.clientX,
-      top: pixelAnchor.clientY
+      top: pixelAnchor.clientY,
     }
-
 
     // שולח את המידע החוצה
     if (onSelectionComplete) {
       onSelectionComplete({
-        ... selection,
-        screenPosition
+        ...selection,
+        screenPosition,
       })
     }
 
@@ -186,13 +173,13 @@ export const genericRectangleInteraction = (props: GenericRectangleInteractionPr
   }
 
   const container = chart.engine.container
-  container.addEventListener("pointerdown", onPointerDown)
-  container.addEventListener("pointermove", onPointerMove)
-  container.addEventListener("pointerup", onPointerUp)
+  container.addEventListener('pointerdown', onPointerDown)
+  container.addEventListener('pointermove', onPointerMove)
+  container.addEventListener('pointerup', onPointerUp)
 
   return () => {
-    container.removeEventListener("pointerdown", onPointerDown)
-    container.removeEventListener("pointermove", onPointerMove)
-    container.removeEventListener("pointerup", onPointerUp)
+    container.removeEventListener('pointerdown', onPointerDown)
+    container.removeEventListener('pointermove', onPointerMove)
+    container.removeEventListener('pointerup', onPointerUp)
   }
 }

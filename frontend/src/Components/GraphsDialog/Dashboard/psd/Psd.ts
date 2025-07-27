@@ -1,69 +1,80 @@
-import {
-    ChartXY,
-    AxisTickStrategies,
-    LegendBoxBuilders,
-} from '@arction/lcjs';
-import { SweepData } from '../../../interfaces/interfaces';
-import { computeChunkAveragedPSD } from '../../../utils/utiles';
+import React, { useEffect } from 'react'
 
-const X_AXIS_TITLE = 'Frequency (Hz)';
-const Y_AXIS_TITLE = 'Power (dB)';
-const LEGENDS_TEXT = 'PSD';
+import { ChartXY, AxisTickStrategies, LegendBoxBuilders } from '@arction/lcjs'
 
-export const createPsd = (
-    chart: ChartXY,
-    sweepData: SweepData,
-    locationId: number,
-    startFrequency: number,
-    endFrequency: number
-): ChartXY => {
+import { DashboardRefs } from '../../../../existCode/components/src/components/generic/LCHeatmap/types'
+import { Location, SweepData } from '../../../interfaces/interfaces'
+import { calcPsdData } from '../../../utils/utiles'
 
-    const rows = sweepData[locationId].captureTimes.length;
-    const columns = sweepData[locationId].data[0].length;
+const X_AXIS_TITLE = 'Frequency (Hz)'
+const Y_AXIS_TITLE = 'Power (dB)'
+const LEGENDS_TEXT_MEAN = 'Mean PSD'
+const LEGENDS_TEXT_MAX = 'Max PSD'
 
-    const VolumeStep = (endFrequency - startFrequency) / columns;
+interface Props {
+  graphsRef: React.MutableRefObject<DashboardRefs>
+  startFrequency: number
+  endFrequency: number
+  sweepData: SweepData
+  sensor: Location
+  rowIndex: number
+  columnIndex: number
+}
 
-    // We'll average the power across all sweeps (rows) per frequency point (column)
-    const averagedPsd: { x: number, y: number }[] = computeChunkAveragedPSD(sweepData[locationId].data, startFrequency, endFrequency);
+const PSD: React.FC<Props> = ({
+  graphsRef,
+  startFrequency,
+  endFrequency,
+  sweepData,
+  sensor,
+  rowIndex,
+  columnIndex,
+}) => {
+  useEffect(() => {
+    const dashboard = graphsRef.current?.dashboard
+    if (!dashboard || !sweepData[sensor.id]) return
+    console.log(dashboard, 'here')
 
-    // sweepData[locationId].data.forEach((packet: number[], packetNum: number) => {
-    //     let sum = 0
-    //     packet.forEach((value) => sum += value)
-    //     const avgPower = sum / rows;
-    //     averagedPsd.push({
-    //         x: startFrequency + packetNum * VolumeStep,
-    //         y: avgPower
-    //     });
-    // })
-    // for (let col = 0; col < columns; col++) {
-    //     let sum = 0;
-    //     for (let row = 0; row < rows; row++) {
-    //         sum += sweepData[locationId].data[row][col];
-    //     }
-    //     const avgPower = sum / rows;
-    //     averagedPsd.push({
-    //         x: startFrequency + col * VolumeStep,
-    //         y: avgPower
-    //     });
-    // }
-    // Configure axes
-    chart.getDefaultAxisX()
-        .setInterval({ start: startFrequency, end: endFrequency })
-        .setTickStrategy(AxisTickStrategies.Numeric)
-        .setTitle(X_AXIS_TITLE);
+    const chart = dashboard.createChartXY({ columnIndex, rowIndex })
 
-    chart.getDefaultAxisY()
-        .setTitle(Y_AXIS_TITLE)
-        .setTickStrategy(AxisTickStrategies.Numeric);
+    const meanPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'mean')
+    const maxPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'max')
 
-    const psdSeries = chart.addLineSeries()
-        .setName(LEGENDS_TEXT)
-        .setStrokeStyle((stroke) => stroke.setThickness(2));
+    chart
+      .getDefaultAxisX()
+      .setTitle(X_AXIS_TITLE)
+      .setTickStrategy(AxisTickStrategies.Numeric)
+      .setInterval({ start: startFrequency, end: endFrequency })
 
-    psdSeries.add(averagedPsd);
+    chart.getDefaultAxisY().setTitle(Y_AXIS_TITLE).setTickStrategy(AxisTickStrategies.Numeric)
 
-    chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox)
-        .add(psdSeries);
+    //     // Create series
+    const meanSeries = chart
+      .addLineSeries()
+      .setName(LEGENDS_TEXT_MEAN)
+      .setStrokeStyle((stroke) => stroke.setThickness(2))
 
-    return chart;
-};
+    const maxSeries = chart
+      .addLineSeries()
+      .setName(LEGENDS_TEXT_MAX)
+      .setStrokeStyle((stroke) => stroke.setThickness(2))
+
+    meanSeries.add(meanPsd)
+    maxSeries.add(maxPsd)
+
+    chart.addLegendBox(LegendBoxBuilders.VerticalLegendBox).add(meanSeries).add(maxSeries)
+
+    graphsRef.current.psdGraph = {
+      ...graphsRef.current.psdGraph,
+      chart,
+    }
+
+    return () => {
+      chart?.dispose()
+    }
+  }, [graphsRef.current.dashboard])
+
+  return null
+}
+
+export default PSD

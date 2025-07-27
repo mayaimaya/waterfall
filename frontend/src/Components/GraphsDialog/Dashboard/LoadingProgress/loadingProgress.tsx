@@ -1,10 +1,11 @@
-import { CircularProgress } from "@mui/material"
-import useStyles from "./loadingProgressStyle"
+import { CircularProgress } from '@mui/material'
+
+import useStyles from './loadingProgressStyle'
 
 const LOADING_TEXT = 'טוען מידע חדש לפי רזולוציה שנבחרה...'
 
-const LoadingProgress : React.FC= () => {
-    const classes= useStyles()
+const LoadingProgress: React.FC = () => {
+    const classes = useStyles()
     return (
         <div className={classes.loadingOverlay}>
             <div className={classes.blurBackground} />
@@ -14,7 +15,6 @@ const LoadingProgress : React.FC= () => {
             </div>
         </div>
     )
-
 }
 
 export default LoadingProgress

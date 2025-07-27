@@ -1,15 +1,12 @@
-import { makeStyles } from '@mui/styles'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles({
-  dashboardContainer: {
-    position: 'relative',
-    width: '1000px',
-    height: '600px',
-  },
-  dashboard: {
-    width: '900px', 
-    height: '600px'
-  },
-})
+const useStyles = makeStyles()(() => ({
+  dialogContent: {
+    height: '100vh',
+    padding: 0,
+    display: 'flex'
+    
+  }
+}))
 
 export default useStyles

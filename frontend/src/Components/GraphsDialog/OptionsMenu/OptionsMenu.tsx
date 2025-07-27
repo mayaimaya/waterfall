@@ -1,7 +1,8 @@
-// OptionsMenu.tsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react'
+
+import CloseIcon from '@mui/icons-material/Close'
+import RoomIcon from '@mui/icons-material/Room'
 import {
-    Box,
     Typography,
     RadioGroup,
     FormControlLabel,
@@ -9,79 +10,76 @@ import {
     Divider,
     Button,
     IconButton,
-} from "@mui/material";
+} from '@mui/material'
+import { boolean } from 'mathjs'
 
-import RoomIcon from "@mui/icons-material/Room";
-import useStyles from "./OptionsMenuStyles";
-import CloseIcon from '@mui/icons-material/Close';
-import { DrawingContext } from "../../../context/drawingContext";
+import { DrawingContext } from '../../../context/drawingContext'
+
+import useStyles from './OptionsMenuStyles'
+
+const TAGGING_STATE = 'מצב תיוג'
+const RESOLUTION_STATE = 'שנה רזולוציה'
+const PLAY_PSD = 'נגן PSD'
+const SHOWֹֹֹֹֹ_PSD = 'נגן PSD'
 
 interface Props {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    showPSD: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setShowPSD: React.Dispatch<React.SetStateAction<boolean>>
 }
-const OptionsMenu: React.FC<Props> = ({ setOpen }) => {
-    const [selectedPSD, setSelectedPSD] = useState("PSD הצג");
-    const classes = useStyles();
+const OptionsMenu: React.FC<Props> = ({ showPSD, setOpen, setShowPSD }) => {
+    const { classes } = useStyles()
 
-    const { enableDraw, setEnableDraw } = useContext(DrawingContext);
+    const { enableDraw, setEnableDraw } = useContext(DrawingContext)
 
     const handleDraw = () => {
-        setEnableDraw(!enableDraw);
+        setEnableDraw(!enableDraw)
     }
 
-
+    const handlePSDOptionsClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setShowPSD(boolean(e.target.value))
+    }
 
     return (
-        <Box className={classes.container}>
-            <IconButton
-                onClick={() => setOpen(false)}
-            >
+        <div className={classes.menuContainer}>
+            <IconButton onClick={() => setOpen(false)}>
                 <CloseIcon />
             </IconButton>
-            <Box className={classes.locationHeader}>
-                <Box className={classes.textAlignRight}>
-                    <Typography>
-                        שם המיקום
-                    </Typography>
-                    <Typography
-                    >
-                        צפון
-                    </Typography>
-                </Box>
-                <RoomIcon />
-            </Box>
+            <div className={classes.locationHeader}>
+                <div className={classes.textLocation}>
+                    <Typography className={classes.locationName}>שם המיקום</Typography>
+                    <Typography>צפון</Typography>
+                </div>
+                <RoomIcon className={classes.locationIcon} />
+            </div>
 
-            <Divider sx={{ my: 1 }} />
-
-            {/* Radio Group */}
+            {/* Apply fullWidthItem class to Divider */}
+            <Divider className={classes.divider} />
             <RadioGroup
-                value={selectedPSD}
-                onChange={(e) => setSelectedPSD(e.target.value)}
+                value={showPSD}
+                onChange={(e) => handlePSDOptionsClick(e)}
                 className={classes.radioGroup}
             >
                 <FormControlLabel
-                    value="PSD הצג"
+                    value='true'
                     control={<Radio />}
-                    label="PSD הצג"
+                    label={SHOWֹֹֹֹֹ_PSD}
                     className={classes.radioItem}
                 />
                 <FormControlLabel
-                    value="PSD נגן"
+                    value='false'
                     control={<Radio />}
-                    label="PSD נגן"
+                    label={PLAY_PSD}
                     className={classes.radioItem}
                 />
             </RadioGroup>
-            <Divider />
+            <Divider className={classes.divider} />
+            <div className={classes.buttonGroup}>
+                <Button>{TAGGING_STATE}</Button>
+                <Button onClick={handleDraw}>{RESOLUTION_STATE}</Button>
+            </div>
+        </div>
+    )
+}
 
-            {/* Buttons */}
-            <Box className={classes.buttonGroup}>
-                <Button>מצב תצוגה</Button>
-
-                <Button onClick={handleDraw}>שנה תצוגה</Button>
-            </Box>
-        </Box>
-    );
-};
-
-export default OptionsMenu;
+export default OptionsMenu
