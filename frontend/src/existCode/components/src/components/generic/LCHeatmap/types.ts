@@ -44,8 +44,8 @@ export interface Graphs {
 
 export interface DashboardRefs {
   dashboard: Dashboard
-  waterfallGraph?: WaterfallGraph
-  psdGraph?: PSDGraph
+  waterfallGraph: WaterfallGraph
+  psdGraph: PSDGraph
 }
 
 export interface Index {

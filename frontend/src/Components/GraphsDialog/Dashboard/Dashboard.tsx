@@ -1,13 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
-import {
-  ChartXY,
-  lightningChart,
-  PointMarker,
-  RectangleFigure,
-  Themes,
-  UIBackground,
-} from '@arction/lcjs'
+import { Dashboard, lightningChart, RectangleFigure, Themes } from '@arction/lcjs'
 import UndoIcon from '@mui/icons-material/Undo'
 import { Fab } from '@mui/material'
 import { Collapse } from '@mui/material'
@@ -19,6 +12,7 @@ import { TIME_CONSTANT } from '../../constants'
 import { Dimensions, GraphConfig, SelectionArea, SweepData } from '../../interfaces/interfaces'
 import { animateRowHeights } from '../../utils/graphsTransition'
 
+import { createDashboardWithGraphs } from './createDashboard'
 import useStyles from './DashboardStyles'
 import { useDrawInteractionHandler } from './hooks/useDrawInteractionHandler'
 import LoadingProgress from './LoadingProgress/loadingProgress'
@@ -26,17 +20,20 @@ import PSD from './psd/Psd'
 import ResolutionPopupMenu from './resolutionPopUpMenu/resolutionPopupMenu'
 
 interface DashboardProps {
-  sweepData?: SweepData
+  sweepData: SweepData
   graphConfig: GraphConfig
   setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>>
-  setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
+  setSweepData: React.Dispatch<React.SetStateAction<SweepData>>
   showPSD: boolean
 }
 
-const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
-  const { graphConfig, setGraphConfig, sweepData, setSweepData, showPSD } = props
-  const graphsRef = useRef<DashboardRefs>({} as DashboardRefs)
-  // const [graphsState, setGraphsState] = useState<GraphsRef>({} as GraphsRef)
+const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
+  const { graphConfig, sweepData, setSweepData, showPSD } = props
+  const graphsRef = useRef<DashboardRefs>({
+    dashboard: {} as Dashboard,
+    psdGraph: {},
+    waterfallGraph: {},
+  } as DashboardRefs)
 
   const [previousData, setPreviousData] = useState<SweepData | null>(null)
   const [selectedArea, setSelectedArea] = useState<SelectionArea | null>(null)
@@ -48,46 +45,23 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
   const { enableDraw, setEnableDraw } = useContext(DrawingContext)
   const { classes } = useStyles()
 
-  const waterfallChartRef = useRef<ChartXY<PointMarker, UIBackground> | null>(null)
   const rectRef = useRef<RectangleFigure | null>(null)
   const rectDimensionsRef = useRef<Dimensions | null>(null)
   const startPoint = useRef<{ x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  //   // יצירת הגרפים
-  //   useEffect(() => {
-  //     if (!containerRef.current || !sweepData) return
-  //     const { dashboard, heatmapChart } = createDashboardWithGraphs(containerRef.current, sweepData, graphConfig)
-  //     waterfallChartRef.current = heatmapChart
-
-  //     return () => {dashboard.dispose()}
-  //   }, [sweepData])
-
-  //   // שליפת מידע חדש ברגע שנבחרה רזולוציה
-  //   const fetchNewChartData = useFetchNewSweepData({
-  //     setLoading,
-  //     setPreviousData,
-  //     sweepData,
-  //     graphConfig,
-  //     setGraphConfig,
-  //     setSweepData,
-  //   })
-  // =======
-  const cleanupRef = useRef<(() => void) | null>(null)
-
+  //create graphs dashboard
   useEffect(() => {
     if (!containerRef.current || !sweepData) return
-    console.log(showPSD)
-
-    const dashboard = lightningChart().Dashboard({
-      container: containerRef.current,
-      numberOfColumns: 1,
-      numberOfRows: 2,
-      theme: Themes.darkGold,
-    })
+    const { dashboard, heatmapChart } = createDashboardWithGraphs(
+      containerRef.current,
+      sweepData,
+      graphConfig,
+    )
+    graphsRef.current.waterfallGraph.chart = heatmapChart
 
     graphsRef.current.dashboard = dashboard
-    // setGraphsState((prev) => ({ ...prev, dashboard }))
+
     if (!showPSD) {
       dashboard.setRowHeight(0, 1)
       dashboard.setRowHeight(1, 0)
@@ -97,6 +71,8 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
       dashboard.dispose()
     }
   }, [sweepData])
+
+  useEffect(() => { }, [sweepData])
 
   useEffect(() => {
     graphsRef.current.dashboard &&
@@ -182,26 +158,6 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
       <div ref={containerRef} className={classes.dashboard} />
       {sweepData && graphsRef.current.dashboard && (
         <>
-          <LCHeatmap
-            endFreq={graphConfig.endVolume}
-            startFreq={graphConfig.startVolume}
-            sensor={{ id: graphConfig.locationId }}
-            x={Array.from(
-              { length: graphConfig.endVolume - graphConfig.startVolume + 1 },
-              (_, i) => graphConfig.startVolume + i,
-            )}
-            y={sweepData[graphConfig.locationId].captureTimes.map(
-              (time) => new Date(time).getTime() - TIME_CONSTANT,
-            )}
-            times={sweepData[graphConfig.locationId].captureTimes.map(
-              (time) => new Date(time).getTime() - TIME_CONSTANT,
-            )}
-            z={sweepData[graphConfig.locationId].data}
-            columnIndex={0}
-            rowIndex={0}
-            heatmapLUT={undefined}
-            graphsRef={graphsRef}
-          />
           {showPSD && (
             <Collapse in={showPSD} timeout={1000} unmountOnExit>
               <PSD
@@ -253,4 +209,4 @@ const Dashboard: React.FC<DashboardProps> = (props: DashboardProps) => {
   )
 }
 
-export default Dashboard
+export default DashboardGraphs

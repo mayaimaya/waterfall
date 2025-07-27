@@ -15,7 +15,7 @@ interface MainPageProps {
 const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
   const { setMode } = props
 
-  const [sweepData, setSweepData] = useState<SweepData | undefined>(undefined)
+  const [sweepData, setSweepData] = useState<SweepData>({} as SweepData)
   const end = new Date()
   const start = new Date(end.getTime() - 10 * 60 * 60 * 1000)
 
@@ -36,9 +36,9 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
       .then((response: SweepData) => {
         setSweepData(response)
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         console.error('Error fetching data:', error)
-        setSweepData(undefined)
+        setSweepData({})
       })
   }, [])
 

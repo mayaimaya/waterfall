@@ -1,8 +1,7 @@
 /* eslint-disable react/display-name */
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
-  AxisScrollStrategies,
   AxisTickStrategies,
   PalettedFill,
   LegendBoxBuilders,
@@ -19,10 +18,9 @@ import {
   ColorRGBA,
 } from '@arction/lcjs'
 
-import { TIME_CONSTANT } from '../../../../../../Components/constants'
 import { Location } from '../../../../../../Components/interfaces/interfaces'
 
-import { DashboardRefs, Graphs, WaterfallData } from './types'
+import { DashboardRefs } from './types'
 
 interface Props {
   x: number[]
@@ -54,6 +52,7 @@ const LCHeatmap = ({
   rowIndex,
   heatmapLUT,
 }: Props) => {
+  const chart = useRef<ChartXY<PointMarker, UIBackground>>({} as ChartXY<PointMarker, UIBackground>)
   const vMinHeatmap = useMemo(
     () => (z.length ? Math.min(...z.map((d: number[]) => Math.min(...d))) + 1 : 0),
     [z],
@@ -69,38 +68,37 @@ const LCHeatmap = ({
 
   const showLegend = true
 
-  const [render, setRender] = useState(false)
-
-  useEffect(() => setRender((prev) => !prev), [rowIndex, columnIndex])
-
   const handleCreateChart = useCallback(() => {
     if (!graphsRef.current) {
       graphsRef.current = {} as DashboardRefs
     }
+    console.log('dashboard is', graphsRef.current.dashboard)
 
     const dashboard = graphsRef.current.dashboard
-    const chart = dashboard
-      ?.createChartXY({
+    const chartCurrent = chart.current
+    chart.current = dashboard
+      .createChartXY({
         columnIndex,
         rowIndex,
       })
       .setPadding({ left: 20 })
 
-    chart
+    chartCurrent
       ?.getDefaultAxisX()
       .setInterval({ start: startFreq, end: endFreq })
       .setTickStrategy(AxisTickStrategies.Numeric)
       .setTitle(X_AXIS_TITLE)
       .setMouseInteractions(true)
 
-    chart
+    chartCurrent
       ?.getDefaultAxisY()
       .setTitle(Y_AXIS_TITLE)
       .setMouseInteractions(true)
       .setInterval({ start: Math.min(...y), end: Math.max(...y) })
 
+    //create ticks
     const ticks: CustomTick[] = []
-    const yAxis = chart?.getDefaultAxisY()
+    const yAxis = chartCurrent?.getDefaultAxisY()
     yAxis &&
       times.forEach((time, index) => {
         if (index % majorTicksGap === 0 && index !== 0) {
@@ -125,7 +123,7 @@ const LCHeatmap = ({
       }
     }
 
-    return chart
+    return chartCurrent
   }, [columnIndex, rowIndex, sensor, times, startFreq, endFreq])
 
   const createHeatMap = useCallback(
@@ -204,7 +202,7 @@ const LCHeatmap = ({
         !heatmap ||
         !z.length ||
         !graphsRef.current ||
-        graphsRef.current.waterfallGraph.legend
+        graphsRef.current.waterfallGraph?.legend
       )
         return
 
@@ -269,28 +267,27 @@ const LCHeatmap = ({
     columnIndex,
     rowIndex,
     heatmapLUT,
-    render,
     handleCreateChart,
     createHeatMap,
     createLegend,
   ])
 
   useEffect(() => {
-    // if (!graphsRef.current[sensor.id] || !graphsRef.current[sensor.id].waterfallGraph) return
+    if (!graphsRef.current || !graphsRef.current.waterfallGraph) return
 
     if (showLegend) {
       createLegend(
         sensor.id,
-        graphsRef.current.waterfallGraph.chart,
-        graphsRef.current.waterfallGraph.heatmap,
+        graphsRef.current?.waterfallGraph?.chart,
+        graphsRef.current?.waterfallGraph?.heatmap,
       )
-    } else if (graphsRef.current.waterfallGraph.legend) {
+    } else if (graphsRef.current.waterfallGraph?.legend) {
       graphsRef.current.waterfallGraph.legend?.dispose()
       graphsRef.current.waterfallGraph.legend = undefined
     }
   }, [showLegend, graphsRef, sensor, createLegend])
 
-  return null
+  return { heatmapChart: chart.current }
 }
 
 export default LCHeatmap

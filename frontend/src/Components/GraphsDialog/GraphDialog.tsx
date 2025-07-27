@@ -5,15 +5,15 @@ import { Box, Dialog, DialogContent } from '@mui/material'
 import { DrawingProvider } from '../../context/drawingContext'
 import { GraphConfig, SweepData } from '../interfaces/interfaces'
 
-import Dashboard from './Dashboard/Dashboard'
+import DashboardGraphs from './Dashboard/Dashboard'
 import useStyles from './GraphDialogStyles'
 import OptionsMenu from './OptionsMenu/OptionsMenu'
 
 interface Props {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  sweepData: SweepData | undefined
-  setSweepData: React.Dispatch<React.SetStateAction<SweepData | undefined>>
+  sweepData: SweepData
+  setSweepData: React.Dispatch<React.SetStateAction<SweepData>>
   graphConfig: GraphConfig // Adjust type as needed
   setGraphConfig: React.Dispatch<React.SetStateAction<GraphConfig>> // Adjust type as
 }
@@ -27,7 +27,7 @@ const GraphsDialog: React.FC<Props> = (props: Props) => {
     <DrawingProvider enableDraw={enableDraw} setEnableDraw={setEnableDraw}>
       <Dialog open={open} fullWidth maxWidth='lg'>
         <DialogContent className={classes.dialogContent}>
-          <Dashboard
+          <DashboardGraphs
             sweepData={sweepData}
             setSweepData={setSweepData}
             graphConfig={graphConfig}
