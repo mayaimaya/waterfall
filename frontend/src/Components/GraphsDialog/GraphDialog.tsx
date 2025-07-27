@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Box, Dialog, DialogContent } from '@mui/material'
+import { Dialog, DialogContent } from '@mui/material'
 
 import { DrawingProvider } from '../../context/drawingContext'
 import { GraphConfig, SweepData } from '../interfaces/interfaces'

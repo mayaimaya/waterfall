@@ -58,9 +58,6 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
       sweepData,
       graphConfig,
     )
-    console.log('create new graphs dashbaord', heatmapChart, dashboard)
-    console.log(graphsRef.current)
-
     graphsRef.current.waterfallGraph.chart = heatmapChart
 
     graphsRef.current.dashboard = dashboard
@@ -73,7 +70,6 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
       dashboard.dispose()
     }
   }, [sweepData])
-
 
   //manage interaction with paint rectangle
   useDrawInteractionHandler({
