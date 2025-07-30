@@ -1,11 +1,11 @@
 import { makeStyles } from 'tss-react/mui'
 
 interface positionProps {
-  left: number
+    left: number
     top: number
 }
 interface StylesProps {
-  position: positionProps
+    position: positionProps
 }
 
 const useStyles = makeStyles<StylesProps>()((_, props: StylesProps) => ({

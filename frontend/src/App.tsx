@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { CssBaseline, useColorScheme } from '@mui/material'
+import { CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material'
 
 import MainPage from './Components/mainPage/mainPage'

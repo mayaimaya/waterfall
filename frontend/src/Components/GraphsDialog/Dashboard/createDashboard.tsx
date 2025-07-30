@@ -18,8 +18,7 @@ export const createDashboardWithGraphs = (
   })
 
   const heatmap = dashboard.createChartXY({ columnIndex: 0, rowIndex: 0 }).setTitle('Heatmap')
-  const psd = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('PSD')
-
+  // const psd = dashboard.createChartXY({ columnIndex: 0, rowIndex: 1 }).setTitle('PSD')
   createHeatmapGraph({
     chart: heatmap,
     startFreq: graphConfig.startVolume,
@@ -38,5 +37,5 @@ export const createDashboardWithGraphs = (
     heatmapLUT: undefined,
   })
 
-  return { dashboard, heatmapChart: heatmap, psdChart: psd }
+  return { dashboard, heatmapChart: heatmap }
 }

@@ -44,7 +44,14 @@ const useStyles = makeStyles()(() => ({
     backdropFilter: 'blur(3px)',
     zIndex: -1,
   },
-
+  fab: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'primary.main',
+    color: 'text.primary',
+    zIndex: 1000,
+  },
   loadingContent: {
     display: 'flex',
     flexDirection: 'column',

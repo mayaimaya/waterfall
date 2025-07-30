@@ -144,14 +144,7 @@ const DashboardGraphs: React.FC<DashboardProps> = (props: DashboardProps) => {
           // אני צריכה לתקן את זה - לא רציתי להתעכב כי העדפתי להתקדם
           // TODO: לחזור לפה
           // eslint-disable-next-line no-restricted-syntax
-          sx={{
-            position: 'absolute',
-            top: 10,
-            left: 10,
-            backgroundColor: 'primary.main',
-            color: 'text.primary',
-            zIndex: 1000,
-          }}
+          className={classes.fab}
           size='small'
         >
           <UndoIcon color='inherit' />

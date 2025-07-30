@@ -35,7 +35,7 @@ const PSD: React.FC<Props> = ({
     if (!dashboard || !sweepData[sensor.id]) return
     console.log(dashboard, 'here')
 
-    const chart = dashboard.createChartXY({ columnIndex, rowIndex })
+    const chart = dashboard.createChartXY({ columnIndex, rowIndex }).setTitle('PSD')
 
     const meanPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'mean')
     const maxPsd = calcPsdData(sweepData[sensor.id].data, startFrequency, endFrequency, 'max')
